@@ -3,6 +3,7 @@
 return [
     'booking.create' => ['customer'],
     'order.view_own' => ['customer'],
+    'dashboard.view' => ['staff', 'admin'],
     'gps.monitor'    => ['staff', 'admin'],
     'order.manage'   => ['staff', 'admin'],
     'customer.view'  => ['staff', 'admin'],
