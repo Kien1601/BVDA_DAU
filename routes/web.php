@@ -46,6 +46,14 @@ Route::middleware(['auth', 'role:staff,admin'])
         Route::middleware('can:store.manage')->group(function () {
             Route::resource('stores', Admin\StoreController::class)->except(['show']);
         });
+
+                // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete
+        Route::middleware('can:vehicle.manage')->group(function () {
+            Route::resource('vehicles', Admin\VehicleController::class)->except(['show', 'destroy']);
+        });
+        Route::delete('/vehicles/{vehicle}', [Admin\VehicleController::class, 'destroy'])
+            ->middleware('can:vehicle.delete')
+            ->name('vehicles.destroy');
     });
 
 require __DIR__.'/auth.php';

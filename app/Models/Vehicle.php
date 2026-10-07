@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 class Vehicle extends Model
 {
@@ -46,5 +47,21 @@ class Vehicle extends Model
     public function latestLocation(): HasOne
     {
         return $this->hasOne(GpsLocation::class)->latestOfMany('device_time');
+    }
+        /** Danh sách loại xe dùng cho form và kiểm tra dữ liệu */
+    public const TYPES = ['Xe số', 'Tay ga', 'Côn tay', 'Xe điện'];
+
+    /**
+     * C2.3 - Điều kiện xóa xe.
+     * TODO (C5): thêm điều kiện không còn đơn pending/approved/active.
+     */
+    public function canBeDeleted(): bool
+    {
+        return $this->status !== VehicleStatus::Rented;
+    }
+
+    public function imageUrl(): ?string
+    {
+        return $this->image ? Storage::disk('public')->url($this->image) : null;
     }
 }
