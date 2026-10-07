@@ -1,0 +1,1 @@
+<div id="gps-connection" class="gps-connection" data-state="connecting">Đang kết nối…</div>

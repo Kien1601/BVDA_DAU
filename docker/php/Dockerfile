@@ -19,5 +19,3 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-RUN docker compose -f docker-compose.local.yml exec -u root app chown -R www-data:www-data storage bootstrap/cache
-RUN docker compose -f docker-compose.local.yml exec -u root app chmod -R 775 storage bootstrap/cache

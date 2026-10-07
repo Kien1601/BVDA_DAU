@@ -6,6 +6,8 @@ use App\Models\Store;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use App\Events\VehicleLocationUpdated;
+use Illuminate\Support\Facades\Event;
 
 class GpsUpdateTest extends TestCase
 {
@@ -98,5 +100,30 @@ class GpsUpdateTest extends TestCase
         Vehicle::first()->delete();
 
         $this->send($this->payload())->assertNotFound();
+    }
+
+    public function test_vi_tri_moi_phat_event_real_time(): void
+    {
+        Event::fake([VehicleLocationUpdated::class]);
+
+        $this->send($this->payload())->assertCreated();
+
+        Event::assertDispatched(
+            VehicleLocationUpdated::class,
+            fn ($e) => $e->position['license_plate'] === '59X1-000.01'
+                && abs($e->position['speed'] - 18.52) < 0.01
+        );
+    }
+
+    public function test_goi_tin_den_muon_khong_phat_event(): void
+    {
+        Event::fake([VehicleLocationUpdated::class]);
+
+        $this->send($this->payload())->assertCreated();
+        $this->send($this->payload([
+            'position' => ['deviceTime' => now()->subHour()->toIso8601String()],
+        ]))->assertCreated();
+
+        Event::assertDispatchedTimes(VehicleLocationUpdated::class, 1);
     }
 }

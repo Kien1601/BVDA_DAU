@@ -1,4 +1,4 @@
-
+import './shared/config/echo';
 
 import Alpine from 'alpinejs';
 

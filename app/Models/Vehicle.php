@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Vehicle extends Model
 {
@@ -40,5 +41,10 @@ class Vehicle extends Model
     public function gpsLocations(): HasMany
     {
         return $this->hasMany(GpsLocation::class);
+    }
+
+    public function latestLocation(): HasOne
+    {
+        return $this->hasOne(GpsLocation::class)->latestOfMany('device_time');
     }
 }
