@@ -1,0 +1,77 @@
+@startuml SEQ_NhanGPS
+autonumber
+skinparam sequenceMessageAlign left
+
+actor "Thiết bị GPS" as Device
+participant "Traccar\n(bên thứ ba)" as Traccar
+participant "VerifyGpsToken\n(middleware)" as MW
+participant "GpsUpdateRequest" as Req
+participant "Api\\GpsController" as Ctrl
+participant "GpsService" as Svc
+participant "TraccarPayloadMapper" as Mapper
+database "Database" as DB
+queue "Queue\n(bảng jobs)" as Q
+participant "Reverb" as Rev
+participant "Bản đồ giám sát\n(Echo + Leaflet)" as Map
+
+note over Device, Traccar
+  Khi phát triển: simulator fake-gps.php
+  gửi thẳng tới API, cùng định dạng với Traccar
+end note
+
+loop Mỗi 10–30 giây
+    Device -> Traccar : Gửi tọa độ qua TCP
+    Traccar -> MW : POST /api/gps/update\nAuthorization: Bearer TOKEN\n{device.uniqueId, position{...}}
+
+    alt Token sai hoặc thiếu
+        MW -> MW : Log::warning (kèm IP)
+        MW --> Traccar : 401 Token không hợp lệ
+    else Token đúng (so sánh bằng hash_equals)
+        MW -> Req : Chuyển tiếp request
+        Req -> Req : Validate: IMEI bắt buộc,\nlat trong [-90, 90], lng trong [-180, 180],\nspeed ≥ 0, deviceTime đúng định dạng
+
+        alt Dữ liệu không hợp lệ
+            Req --> Traccar : 422 + danh sách lỗi
+        else Dữ liệu hợp lệ
+            Req -> Ctrl : update(request)
+            activate Ctrl
+            Ctrl -> Ctrl : Log::debug (payload thô)
+            Ctrl -> Svc : handle(validated)
+            activate Svc
+            Svc -> Mapper : map(payload)
+            Mapper --> Svc : imei, lat, lng,\nspeed (km/h = knots × 1.852), device_time
+            Svc -> DB : Tìm xe theo gps_device_id = IMEI\n(bỏ qua xe đã xóa mềm)
+            DB --> Svc : vehicle hoặc null
+
+            alt Không tìm thấy xe
+                Svc -> Svc : Log::warning (IMEI lạ)
+                Svc --> Ctrl : null
+                Ctrl --> Traccar : 404 Không tìm thấy xe
+            else Tìm thấy xe
+                group Transaction
+                    Svc -> DB : INSERT gps_locations\n(lat, lng, speed, device_time, received_at = now)
+                    Svc -> Svc : isNewest = device_time ≥ last_device_time
+                    alt isNewest
+                        Svc -> DB : UPDATE vehicles SET last_signal_at,\nlast_lat, last_lng, last_device_time
+                    else Gói tin đến muộn (thiết bị gửi bù)
+                        Svc -> DB : UPDATE vehicles SET last_signal_at\n(giữ nguyên vị trí cuối)
+                    end
+                end
+                opt isNewest
+                    Svc -> Q : dispatch VehicleLocationUpdated\n(vehicle_id, biển số, lat, lng, speed, thời gian)
+                end
+                Svc --> Ctrl : GpsLocation
+                Ctrl --> Traccar : 201 {message: ok, id}
+
+                opt isNewest (bất đồng bộ, sau khi đã trả 201)
+                    Q -> Rev : Queue worker gửi event\ntới kênh private-admin.monitor
+                    Rev -> Map : vehicle.location.updated
+                    Map -> Map : Di chuyển marker,\ncập nhật danh sách xe và popup
+                end
+            end
+            deactivate Svc
+            deactivate Ctrl
+        end
+    end
+end
+@enduml

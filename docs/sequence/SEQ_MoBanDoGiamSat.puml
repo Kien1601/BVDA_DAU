@@ -1,0 +1,64 @@
+@startuml SEQ_MoBanDoGiamSat
+autonumber
+skinparam sequenceMessageAlign left
+
+actor "Nhân viên / Quản trị viên" as User
+participant "Trình duyệt\n(gpsMonitor.page.js)" as UI
+participant "Middleware\nauth → role → can:gps.monitor" as MW
+participant "Admin\\MapMonitorController" as MapCtrl
+participant "Admin\\PositionController" as PosCtrl
+participant "Broadcast auth\n(routes/channels.php)" as ChAuth
+participant "Reverb" as Rev
+database "Database" as DB
+
+User -> MW : GET /admin/gps-monitor
+
+alt Chưa đăng nhập
+    MW --> User : redirect /login
+else Không phải staff/admin, hoặc thiếu quyền gps.monitor
+    MW --> User : 403 Forbidden
+else Hợp lệ
+    MW -> MapCtrl : index()
+    activate MapCtrl
+    MapCtrl -> DB : Lấy cửa hàng đầu tiên (làm tâm bản đồ)
+    DB --> MapCtrl : latitude, longitude
+    MapCtrl --> UI : HTML monitor.blade.php\n(data-positions-url, data-lat, data-lng)
+    deactivate MapCtrl
+
+    UI -> UI : createMap(): Leaflet + nền bản đồ\n(nguồn chọn theo VITE_MAP_PROVIDER)
+
+    == C9.1 – Vị trí ban đầu ==
+    UI -> MW : GET /admin/gps-monitor/positions\n(fetch, kèm cookie phiên)
+    MW -> PosCtrl : index()
+    activate PosCtrl
+    PosCtrl -> DB : Xe có gps_device_id\n+ latestLocation (lấy tốc độ)
+    DB --> PosCtrl : Danh sách xe
+    PosCtrl --> UI : JSON PositionResource {data: [...]}
+    deactivate PosCtrl
+    UI -> UI : Vẽ marker, căn khung bản đồ (fitBounds).\nXe chưa có tín hiệu chỉ hiện trong danh sách
+
+    == C9.2 – Đăng ký nhận dữ liệu real-time ==
+    UI -> Rev : Mở kết nối WebSocket
+    Rev --> UI : socket_id
+    UI -> ChAuth : POST /broadcasting/auth\n(socket_id, private-admin.monitor, CSRF)
+    ChAuth -> ChAuth : $user->can('gps.monitor')
+
+    alt Có quyền
+        ChAuth --> UI : Chữ ký xác thực kênh
+        UI -> Rev : Đăng ký kênh private-admin.monitor (kèm chữ ký)
+        Rev --> UI : Đăng ký thành công
+        UI --> User : "Đang nhận dữ liệu real-time"
+    else Không có quyền
+        ChAuth --> UI : 403
+        UI --> User : "Không có quyền nhận dữ liệu vị trí"
+    end
+
+    == C9.3 – Xem chi tiết ==
+    User -> UI : Bấm marker hoặc tên xe trong danh sách
+    UI --> User : Phóng tới xe, mở popup:\nbiển số, khách thuê, tốc độ, thời điểm cập nhật
+
+    loop Mỗi 15 giây
+        UI -> UI : Tính lại trạng thái tín hiệu\n(quá 2 phút không nhận → chuyển xám)
+    end
+end
+@enduml

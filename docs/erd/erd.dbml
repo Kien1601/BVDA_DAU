@@ -1,0 +1,171 @@
+// ERD - Rental GPS
+// Đã code: users, stores, vehicles, gps_locations
+// Giai đoạn 4: promotions, rental_orders, payments, violations (tùy chọn)
+
+Enum user_role {
+  customer
+  staff
+  admin
+}
+
+Enum vehicle_status {
+  available
+  rented
+  maintenance
+}
+
+Enum order_status {
+  pending
+  approved
+  active
+  completed
+  cancelled
+}
+
+Enum payment_method {
+  vnpay
+  momo
+  cash
+}
+
+Enum payment_type {
+  deposit
+  rental
+  surcharge
+  refund
+}
+
+Enum payment_status {
+  pending
+  paid
+  failed
+  refunded
+}
+
+Table users {
+  id bigint [pk, increment]
+  name varchar
+  email varchar [unique]
+  phone varchar(20) [null]
+  email_verified_at timestamp [null]
+  password varchar
+  role user_role [default: 'customer', note: 'Đăng ký công khai luôn là customer']
+  id_card_number varchar(20) [null]
+  violation_count int [default: 0]
+  is_active boolean [default: true, note: 'false = bị khóa, không đăng nhập được']
+  remember_token varchar [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table stores {
+  id bigint [pk, increment]
+  name varchar
+  address varchar
+  latitude decimal(10,7)
+  longitude decimal(10,7)
+  phone varchar(20) [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table vehicles {
+  id bigint [pk, increment]
+  store_id bigint [ref: > stores.id, note: 'Không xóa được cửa hàng còn xe']
+  license_plate varchar(20) [unique]
+  name varchar
+  brand varchar(50) [null]
+  type varchar(50) [null]
+  image varchar [null]
+  price_per_hour int
+  price_per_day int
+  price_per_week int
+  status vehicle_status [default: 'available', note: 'Chỉ trạng thái nghiệp vụ, không chứa trạng thái kết nối']
+  gps_device_id varchar(32) [unique, null, note: 'IMEI thiết bị']
+  last_signal_at timestamp [null, note: 'Giờ server nhận gói cuối (dùng cho C10)']
+  last_device_time timestamp [null, note: 'Giờ thiết bị của vị trí cuối (chống gói đến muộn)']
+  last_lat decimal(10,7) [null]
+  last_lng decimal(10,7) [null]
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null, note: 'Xóa mềm']
+
+  Note: 'Các cột gps_device_id, last_* không bao giờ trả về cho khách hàng'
+}
+
+Table gps_locations {
+  id bigint [pk, increment]
+  vehicle_id bigint [ref: > vehicles.id]
+  latitude decimal(10,7)
+  longitude decimal(10,7)
+  speed decimal(6,2) [default: 0, note: 'km/h (đã đổi từ knots)']
+  device_time timestamp [note: 'Giờ thiết bị ghi nhận']
+  received_at timestamp [note: 'Giờ server nhận']
+
+  indexes {
+    (vehicle_id, received_at)
+  }
+
+  Note: 'Dữ liệu cũ hơn GPS_RETENTION_DAYS sẽ được dọn định kỳ'
+}
+
+Table promotions {
+  id bigint [pk, increment]
+  code varchar [unique]
+  discount_percent int [null, note: 'Chỉ dùng một trong hai: % hoặc số tiền']
+  discount_amount int [null]
+  start_date date
+  end_date date
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Giai đoạn 4 - chưa code'
+}
+
+Table rental_orders {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  vehicle_id bigint [ref: > vehicles.id]
+  promotion_id bigint [ref: > promotions.id, null]
+  start_time timestamp
+  end_time timestamp
+  actual_return_time timestamp [null]
+  status order_status [default: 'pending']
+  deposit_amount int
+  total_amount int
+  surcharge_amount int [default: 0]
+  note text [null]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Giai đoạn 4 - chưa code'
+}
+
+Table payments {
+  id bigint [pk, increment]
+  rental_order_id bigint [ref: > rental_orders.id]
+  method payment_method
+  type payment_type
+  amount int
+  status payment_status [default: 'pending']
+  transaction_code varchar [null]
+  paid_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+
+  Note: 'Giai đoạn 4 - chưa code'
+}
+
+Table violations {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id]
+  rental_order_id bigint [ref: > rental_orders.id, null]
+  reason text
+  created_by bigint [ref: > users.id, note: 'Nhân viên ghi nhận']
+  created_at timestamp
+
+  Note: 'TÙY CHỌN - chờ quyết định có làm hay chỉ dùng users.violation_count'
+}
+
+// truy cập dbdiagram.io/d để xuất png/pdf
