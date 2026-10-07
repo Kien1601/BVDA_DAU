@@ -54,6 +54,17 @@ Route::middleware(['auth', 'role:staff,admin'])
         Route::delete('/vehicles/{vehicle}', [Admin\VehicleController::class, 'destroy'])
             ->middleware('can:vehicle.delete')
             ->name('vehicles.destroy');
+
+                // C6 - Giá thuê và khuyến mãi (chỉ admin)
+        Route::middleware('can:pricing.manage')->group(function () {
+            Route::get('/pricing', [Admin\PricingController::class, 'index'])->name('pricing');
+            Route::put('/pricing/by-type', [Admin\PricingController::class, 'updateByType'])->name('pricing.by-type');
+            Route::put('/pricing/vehicles', [Admin\PricingController::class, 'updateVehicles'])->name('pricing.vehicles');
+
+            Route::resource('promotions', Admin\PromotionController::class)->except(['show']);
+            Route::patch('/promotions/{promotion}/toggle', [Admin\PromotionController::class, 'toggle'])
+                ->name('promotions.toggle');
+        });
     });
 
 require __DIR__.'/auth.php';
