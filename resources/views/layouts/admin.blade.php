@@ -5,22 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Quản lý') — Rental GPS</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-paper font-sans font-light text-ink antialiased">
     <div class="flex min-h-screen">
         @include('layouts.partials.admin-sidebar')
 
-        <div class="flex-1 flex flex-col">
+        <div class="flex min-w-0 flex-1 flex-col">
             @include('layouts.partials.admin-topbar')
 
-            <main class="p-6">
+            <main class="flex-1 p-6 lg:p-8">
                 @include('layouts.partials.flash-message')
                 @yield('content')
             </main>
         </div>
     </div>
+
     @stack('scripts')
 </body>
 </html>

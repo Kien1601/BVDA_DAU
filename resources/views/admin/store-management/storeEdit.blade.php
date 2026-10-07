@@ -3,15 +3,17 @@
 @section('title', 'Sửa cửa hàng')
 
 @section('content')
-    <form method="POST" action="{{ route('admin.stores.update', $store) }}" class="bg-white rounded border p-6">
+    <x-page-header eyebrow="Cửa hàng" :title="$store->name" />
+
+    <form method="POST" action="{{ route('admin.stores.update', $store) }}" class="rounded-lg border border-ink/10 bg-white p-6">
         @csrf
         @method('PUT')
 
         @include('admin.store-management.partials.store-form')
 
-        <div class="mt-6 flex justify-end gap-3">
-            <a href="{{ route('admin.stores.index') }}" class="px-4 py-2 rounded-md border text-sm">Hủy</a>
-            <x-primary-button>Cập nhật</x-primary-button>
+        <div class="mt-8 flex justify-end gap-3 border-t border-ink/10 pt-5">
+            <x-button variant="secondary" :href="route('admin.stores.index')">Hủy</x-button>
+            <x-button>Cập nhật</x-button>
         </div>
     </form>
 @endsection

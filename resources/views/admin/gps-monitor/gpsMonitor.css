@@ -1,89 +1,129 @@
+/* Trang giám sát GPS — theo docs/design/huong-dan-giao-dien.md.
+   Dùng CSS riêng vì danh sách xe do JavaScript dựng, Tailwind không quét tới. */
+
 .gps-monitor {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 18rem;
     gap: 1rem;
-    height: calc(100vh - 8.5rem);
+    height: calc(100vh - 13rem);
+    min-height: 26rem;
 }
 
 .gps-map {
     height: 100%;
-    min-height: 24rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    z-index: 0; /* giữ các lớp của Leaflet nằm dưới thanh topbar */
+    border: 1px solid rgba(5, 7, 10, .10);
+    border-radius: .5rem;
+    z-index: 0;
 }
 
 .gps-sidebar {
     display: flex;
     flex-direction: column;
     background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
+    border: 1px solid rgba(5, 7, 10, .10);
+    border-radius: .5rem;
     overflow: hidden;
 }
 
 .gps-connection {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    color: #6b7280;
-    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .85rem 1rem;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #78837c;
+    border-bottom: 1px solid rgba(5, 7, 10, .08);
+}
+
+.gps-connection::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: currentColor;
 }
 
 .gps-connection[data-state="connected"] { color: #15803d; }
+.gps-connection[data-state="connected"]::before { box-shadow: 0 0 8px currentColor; }
 
 .gps-connection[data-state="unavailable"],
 .gps-connection[data-state="disconnected"],
 .gps-connection[data-state="failed"],
-.gps-connection[data-state="denied"] { color: #b91c1c; }
+.gps-connection[data-state="denied"] { color: #e0231c; }
 
 .gps-sidebar-title {
-    padding: 0.75rem 1rem 0.25rem;
-    font-weight: 600;
+    padding: .9rem 1rem .35rem;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: #78837c;
 }
 
 .gps-vehicle-list {
     flex: 1;
     overflow-y: auto;
-    padding: 0.5rem;
+    padding: .25rem .5rem .75rem;
 }
 
 .gps-vehicle-item {
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
+    position: relative;
+    padding: .6rem .75rem;
+    border-radius: .375rem;
     cursor: pointer;
+    transition: background-color .3s cubic-bezier(.16, 1, .3, 1);
 }
 
-.gps-vehicle-item:hover { background: #f3f4f6; }
+.gps-vehicle-item:hover { background: #f4f6f3; }
 
-.gps-vehicle-item--disabled { cursor: default; opacity: 0.7; }
+.gps-vehicle-item--disabled { cursor: default; opacity: .65; }
 .gps-vehicle-item--disabled:hover { background: transparent; }
 
 .gps-vehicle-title {
     display: flex;
     align-items: center;
-    font-weight: 500;
+    font-size: .875rem;
+    font-weight: 400;
+    color: #05070a;
+    font-variant-numeric: tabular-nums;
 }
 
 .gps-vehicle-meta {
-    margin-top: 0.125rem;
-    font-size: 0.75rem;
-    color: #6b7280;
+    margin-top: .15rem;
+    padding-left: 1.1rem;
+    font-size: .75rem;
+    color: #78837c;
 }
 
 .gps-dot {
     display: inline-block;
-    width: 0.6rem;
-    height: 0.6rem;
-    margin-right: 0.5rem;
+    width: .55rem;
+    height: .55rem;
+    margin-right: .55rem;
     border-radius: 9999px;
 }
 
 .gps-popup {
-    font-size: 0.8125rem;
-    line-height: 1.5;
+    font-family: 'Onest', system-ui, sans-serif;
+    font-size: .8125rem;
+    line-height: 1.55;
+}
+
+.gps-popup strong {
+    display: block;
+    margin-bottom: .15rem;
+    font-weight: 500;
+    letter-spacing: .04em;
 }
 
 @media (max-width: 768px) {
     .gps-monitor { grid-template-columns: 1fr; height: auto; }
     .gps-map { height: 60vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gps-vehicle-item { transition: none; }
 }

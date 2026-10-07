@@ -1,30 +1,27 @@
-<div class="bg-white rounded border mt-6">
-    <div class="px-4 py-3 border-b font-medium">Đơn thuê mới</div>
+<div class="mt-8">
+    <div class="mb-3 text-[10px] font-medium uppercase tracking-label text-muted">Đơn thuê mới</div>
 
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-left text-gray-500">
+    <x-table>
+        <x-slot:head>
+            <th>Mã đơn</th>
+            <th>Khách hàng</th>
+            <th>Xe</th>
+            <th>Bắt đầu</th>
+            <th>Trạng thái</th>
+        </x-slot:head>
+
+        @forelse ($recentOrders as $order)
             <tr>
-                <th class="px-4 py-2">Mã đơn</th>
-                <th class="px-4 py-2">Khách hàng</th>
-                <th class="px-4 py-2">Xe</th>
-                <th class="px-4 py-2">Bắt đầu</th>
-                <th class="px-4 py-2">Trạng thái</th>
+                <td class="tabular-nums">#{{ $order->id }}</td>
+                <td>{{ $order->user->name }}</td>
+                <td>{{ $order->vehicle->license_plate }}</td>
+                <td class="tabular-nums">{{ $order->start_time->format('d/m/Y H:i') }}</td>
+                <td><x-status-badge>{{ $order->status->value }}</x-status-badge></td>
             </tr>
-        </thead>
-        <tbody>
-            @forelse ($recentOrders as $order)
-                <tr class="border-t">
-                    <td class="px-4 py-2">#{{ $order->id }}</td>
-                    <td class="px-4 py-2">{{ $order->user->name }}</td>
-                    <td class="px-4 py-2">{{ $order->vehicle->license_plate }}</td>
-                    <td class="px-4 py-2">{{ $order->start_time->format('d/m/Y H:i') }}</td>
-                    <td class="px-4 py-2">{{ $order->status->value }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" class="px-4 py-6 text-center text-gray-500">Chưa có đơn thuê nào.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+        @empty
+            <tr>
+                <td colspan="5" class="py-8 text-center text-muted">Chưa có đơn thuê nào.</td>
+            </tr>
+        @endforelse
+    </x-table>
 </div>
