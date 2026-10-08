@@ -1,6 +1,6 @@
 {{--
     Ô chọn có nhãn và thông báo lỗi. options: [giá trị => chữ hiển thị].
-    tone: light (mặc định) | dark
+    tone: giữ để các trang đang truyền không lỗi, không còn tác dụng (màu theo vai trò tự đổi theo chế độ).
 --}}
 @props(['name', 'label' => null, 'options' => [], 'value' => null, 'placeholder' => null, 'tone' => 'light'])
 
@@ -8,17 +8,15 @@
     $id = $attributes->get('id', $name);
     $invalid = $errors->has($name);
     $current = (string) old($name, $value);
-    $dark = $tone === 'dark';
-
-    $surface = $dark ? 'bg-ink text-bone' : 'bg-white text-ink';
+    $surface = 'bg-card text-fg';
     $border = $invalid
         ? 'border-vermilion focus:border-vermilion'
-        : ($dark ? 'border-line focus:border-bone/40' : 'border-ink/15 focus:border-ink/50');
+        : 'border-edge-strong focus:border-fg/50';
 @endphp
 
 <div>
     @if ($label)
-        <label for="{{ $id }}" class="block text-[10px] font-medium uppercase tracking-label text-muted">{{ $label }}</label>
+        <label for="{{ $id }}" class="block text-[10px] font-medium uppercase tracking-label text-fg-muted">{{ $label }}</label>
     @endif
 
     <select id="{{ $id }}" name="{{ $name }}"
