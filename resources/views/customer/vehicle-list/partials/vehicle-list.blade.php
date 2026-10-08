@@ -1,7 +1,7 @@
 @if ($vehicles->isEmpty())
-    <div class="mt-16 rounded-xl border border-dashed border-line px-6 py-16 text-center">
-        <p class="text-lg text-bone">Không tìm thấy xe phù hợp.</p>
-        <p class="mt-2 text-sm text-muted">Thử bỏ bớt điều kiện lọc hoặc chọn cửa hàng khác.</p>
+    <div class="mt-16 rounded-xl border border-dashed border-edge px-6 py-16 text-center">
+        <p class="text-lg text-fg">Không tìm thấy xe phù hợp.</p>
+        <p class="mt-2 text-sm text-fg-muted">Thử bỏ bớt điều kiện lọc hoặc chọn cửa hàng khác.</p>
         @if ($hasFilters)
             <div class="mt-6">
                 <x-button variant="outline-light" :href="route('vehicles.index')">Xem tất cả xe</x-button>
