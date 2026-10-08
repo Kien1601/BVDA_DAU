@@ -8,7 +8,8 @@
 <a href="{{ route('vehicles.show', $vehicle) }}" data-tilt="7"
    {{ $attributes->merge(['class' => 'group relative block overflow-hidden rounded-xl border border-edge bg-card transition-colors duration-500 hover:border-fg/30']) }}>
 
-    <div class="relative aspect-[4/3] overflow-hidden bg-[radial-gradient(70%_60%_at_50%_80%,rgba(224,35,28,.14),transparent_70%),linear-gradient(#0d141a,#0a0e12)]">
+    {{-- khung ảnh luôn tối kiểu "studio" ở cả hai chế độ; thân thẻ bên dưới theo chế độ chung --}}
+    <div data-theme="dark" class="relative aspect-[4/3] overflow-hidden bg-[radial-gradient(70%_60%_at_50%_80%,rgba(224,35,28,.14),transparent_70%),linear-gradient(rgb(var(--t-card-2)),rgb(var(--t-card)))]">
         @if ($vehicle->imageUrl())
             <img src="{{ $vehicle->imageUrl() }}" alt="{{ $vehicle->name }}" loading="lazy"
                  class="h-full w-full object-cover transition-transform duration-700 ease-soft group-hover:scale-105">
