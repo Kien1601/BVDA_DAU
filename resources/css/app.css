@@ -41,3 +41,9 @@ html[data-theme="light"] [data-theme-follow] {
     --t-on-solid: 244 246 243;
     color-scheme: light;
 }
+
+/* Nút đổi chế độ (<x-theme-toggle>): mặt trời khi đang tối, mặt trăng khi đang sáng */
+html[data-theme="dark"] .theme-icon-moon,
+html[data-theme="light"] .theme-icon-sun {
+    display: none;
+}

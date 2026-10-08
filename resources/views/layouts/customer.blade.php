@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="dark">
+<html lang="vi" data-theme="dark" data-area-default="dark">
 <head>
     <meta charset="utf-8">
+    @include('layouts.partials.theme-boot')
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Thuê xe máy') — Rental GPS</title>

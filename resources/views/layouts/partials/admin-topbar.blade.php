@@ -4,6 +4,8 @@
     </div>
 
     <div class="flex items-center gap-5">
+        <x-theme-toggle />
+
         <div class="text-right leading-tight">
             <div class="text-sm text-fg">{{ auth()->user()->name }}</div>
             <div class="text-[10px] uppercase tracking-label text-fg-muted">{{ auth()->user()->role->value }}</div>

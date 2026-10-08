@@ -1,5 +1,5 @@
 import L from '../config/leaflet';
-import { createMap } from './createMap';
+import { createMap, setMapProvider } from './createMap';
 import './storeMap.css';
 
 /**
@@ -15,7 +15,14 @@ export function renderStoreMap(element, { zoom = 15 } = {}) {
     }
     if (!stores.length) return null;
 
-    const map = createMap(element, { center: [stores[0].lat, stores[0].lng], zoom, provider: 'esriDark' });
+    const map = createMap(element, {
+        center: [stores[0].lat, stores[0].lng],
+        zoom,
+        provider: providerFor(document.documentElement.dataset.theme),
+    });
+
+    // nền bản đồ đổi ngay khi người dùng đổi chế độ sáng/tối
+    window.addEventListener('theme:change', (event) => setMapProvider(map, providerFor(event.detail.theme)));
 
     const icon = L.divIcon({
         className: 'store-pin-wrap',
@@ -36,6 +43,11 @@ export function renderStoreMap(element, { zoom = 15 } = {}) {
     }
 
     return { map, markers };
+}
+
+/* Nền đường phố khi sáng, nền xám đậm khi tối */
+function providerFor(theme) {
+    return theme === 'light' ? 'esri' : 'esriDark';
 }
 
 /* Dựng bằng textContent để chống chèn mã từ dữ liệu */

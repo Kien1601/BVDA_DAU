@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi" data-theme="light" data-area-default="light">
 <head>
     <meta charset="utf-8">
+    @include('layouts.partials.theme-boot')
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Rental GPS' }} — Thuê xe & định vị</title>
@@ -20,6 +21,8 @@
 
         {{-- làm tối nhẹ phần giữa để form luôn nổi rõ trên nền cảnh --}}
         <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_55%_at_50%_50%,rgba(5,7,10,.55),rgba(5,7,10,.15)_70%,transparent)]"></div>
+
+        <x-theme-toggle class="absolute right-4 top-4 z-20 sm:right-6 sm:top-6" />
 
         <div class="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-10">
             <a href="{{ url('/') }}" class="mb-8 flex items-center gap-3">
