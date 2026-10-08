@@ -75,7 +75,7 @@ Table vehicles {
   license_plate varchar(20) [unique]
   name varchar
   brand varchar(50) [null]
-  type varchar(50) [null]
+  type varchar(50) [note: 'Xe số | Tay ga | Côn tay | Xe điện (danh sách cố định)']
   image varchar [null]
   price_per_hour int
   price_per_day int
@@ -120,7 +120,7 @@ Table promotions {
   created_at timestamp
   updated_at timestamp
 
-  Note: 'Giai đoạn 4 - chưa code'
+  Note: 'Trạng thái (đang áp dụng / sắp diễn ra / hết hạn / đã tắt) tính từ ngày, không lưu cột riêng'
 }
 
 Table rental_orders {
@@ -165,7 +165,7 @@ Table violations {
   created_by bigint [ref: > users.id, note: 'Nhân viên ghi nhận']
   created_at timestamp
 
-  Note: 'TÙY CHỌN - chờ quyết định có làm hay chỉ dùng users.violation_count'
+    Note: 'Giai đoạn 4 (C4) - chưa code'
 }
 
 // truy cập dbdiagram.io/d để xuất png/pdf
