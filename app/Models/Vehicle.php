@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 
 class Vehicle extends Model
 {
@@ -62,6 +63,22 @@ class Vehicle extends Model
 
     public function imageUrl(): ?string
     {
-        return $this->image ? Storage::disk('public')->url($this->image) : null;
+        if (! $this->image) {
+            return null;
+        }
+
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = Storage::disk('public');
+
+        return $disk->url($this->image);
+    }
+
+        /**
+     * Xe khách được xem: bỏ xe đang bảo dưỡng. Xe đã xóa mềm tự bị loại.
+     * Xe đang cho thuê vẫn hiện, vì khách có thể đặt cho ngày khác (đặc tả B2).
+     */
+    public function scopeVisibleToCustomers(Builder $query): Builder
+    {
+        return $query->where('status', '!=', VehicleStatus::Maintenance->value);
     }
 }

@@ -1,28 +1,30 @@
 {{--
-    Ô chọn có nhãn và thông báo lỗi. options: mảng [giá trị => chữ hiển thị].
+    Ô chọn có nhãn và thông báo lỗi. options: [giá trị => chữ hiển thị].
+    tone: light (mặc định) | dark
 --}}
-@props(['name', 'label' => null, 'options' => [], 'value' => null, 'placeholder' => null])
+@props(['name', 'label' => null, 'options' => [], 'value' => null, 'placeholder' => null, 'tone' => 'light'])
 
 @php
     $id = $attributes->get('id', $name);
     $invalid = $errors->has($name);
     $current = (string) old($name, $value);
-    $state = $invalid
+    $dark = $tone === 'dark';
+
+    $surface = $dark ? 'bg-ink text-bone' : 'bg-white text-ink';
+    $border = $invalid
         ? 'border-vermilion focus:border-vermilion'
-        : 'border-ink/15 focus:border-ink/50';
+        : ($dark ? 'border-line focus:border-bone/40' : 'border-ink/15 focus:border-ink/50');
 @endphp
 
 <div>
     @if ($label)
-        <label for="{{ $id }}" class="block text-[10px] font-medium uppercase tracking-label text-muted">
-            {{ $label }}
-        </label>
+        <label for="{{ $id }}" class="block text-[10px] font-medium uppercase tracking-label text-muted">{{ $label }}</label>
     @endif
 
     <select id="{{ $id }}" name="{{ $name }}"
         {{ $attributes->except('id')->merge([
-            'class' => 'mt-1.5 block w-full rounded-md border bg-white px-3 py-2 pe-9 text-sm text-ink '
-                     . 'shadow-none transition focus:outline-none focus:ring-0 ' . $state,
+            'class' => 'mt-1.5 block w-full rounded-md border px-3 py-2 pe-9 text-sm shadow-none transition '
+                     . 'focus:outline-none focus:ring-0 ' . $surface . ' ' . $border,
         ]) }}>
         @if ($placeholder !== null)
             <option value="">{{ $placeholder }}</option>

@@ -3,10 +3,13 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Customer;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// ================= TRANG KHÁCH (công khai, không cần đăng nhập) =================
+Route::get('/', [Customer\HomeController::class, 'index'])->name('home');
+Route::get('/vehicles', [Customer\VehicleController::class, 'index'])->name('vehicles.index');
+Route::get('/vehicles/{vehicle}', [Customer\VehicleController::class, 'show'])->name('vehicles.show');
+Route::get('/stores', [Customer\StoreController::class, 'index'])->name('stores.index');
 
 // Route mặc định của Breeze, giữ tạm vì menu Breeze đang dùng
 Route::get('/dashboard', function () {
