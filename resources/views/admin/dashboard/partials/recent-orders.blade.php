@@ -1,5 +1,5 @@
 <div class="mt-8">
-    <div class="mb-3 text-[10px] font-medium uppercase tracking-label text-muted">Đơn thuê mới</div>
+    <div class="mb-3 text-[10px] font-medium uppercase tracking-label text-fg-muted">Đơn thuê mới</div>
 
     <x-table>
         <x-slot:head>
@@ -20,7 +20,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="5" class="py-8 text-center text-muted">Chưa có đơn thuê nào.</td>
+                <td colspan="5" class="py-8 text-center text-fg-muted">Chưa có đơn thuê nào.</td>
             </tr>
         @endforelse
     </x-table>

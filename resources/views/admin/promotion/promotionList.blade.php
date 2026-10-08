@@ -36,7 +36,7 @@
             <tr>
                 <td class="font-medium tracking-wider">{{ $promotion->code }}</td>
                 <td>{{ $promotion->discountLabel() }}</td>
-                <td class="tabular-nums text-ink/80">
+                <td class="tabular-nums text-fg-soft">
                     {{ $promotion->start_date->format('d/m/Y') }} – {{ $promotion->end_date->format('d/m/Y') }}
                 </td>
                 <td>
@@ -61,7 +61,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="5" class="py-8 text-center text-muted">
+                <td colspan="5" class="py-8 text-center text-fg-muted">
                     {{ array_filter($filters) ? 'Không có mã nào phù hợp bộ lọc.' : 'Chưa có mã khuyến mãi nào.' }}
                 </td>
             </tr>

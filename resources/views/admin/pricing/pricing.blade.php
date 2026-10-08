@@ -9,7 +9,7 @@
         </x-slot:actions>
     </x-page-header>
 
-    <p class="-mt-3 mb-6 text-sm text-muted">
+    <p class="-mt-3 mb-6 text-sm text-fg-muted">
         Giá mới chỉ áp dụng cho các đơn tạo sau khi lưu. Đơn đã tạo giữ nguyên số tiền.
     </p>
 
@@ -33,14 +33,14 @@
         @method('PUT')
 
         <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="text-[10px] font-medium uppercase tracking-label text-muted">02 · Giá từng xe</div>
+            <div class="text-[10px] font-medium uppercase tracking-label text-fg-muted">02 · Giá từng xe</div>
 
             @php $chips = ['' => 'Tất cả'] + array_combine(\App\Models\Vehicle::TYPES, \App\Models\Vehicle::TYPES); @endphp
             <nav class="flex flex-wrap gap-1">
                 @foreach ($chips as $value => $text)
                     <a href="{{ route('admin.pricing', array_filter(['type' => $value])) }}"
                        class="rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-label transition-colors
-                              {{ (string) $type === (string) $value ? 'bg-ink text-bone' : 'text-muted hover:text-ink' }}">
+                              {{ (string) $type === (string) $value ? 'bg-solid text-on-solid' : 'text-fg-muted hover:text-fg' }}">
                         {{ $text }}
                     </a>
                 @endforeach
@@ -60,9 +60,9 @@
                 <tr>
                     <td>
                         <div class="font-normal tabular-nums">{{ $vehicle->license_plate }}</div>
-                        <div class="text-xs text-muted">{{ $vehicle->name }} · {{ $vehicle->store->name }}</div>
+                        <div class="text-xs text-fg-muted">{{ $vehicle->name }} · {{ $vehicle->store->name }}</div>
                     </td>
-                    <td class="text-ink/80">{{ $vehicle->type }}</td>
+                    <td class="text-fg-soft">{{ $vehicle->type }}</td>
                     @foreach (['price_per_hour' => 'hour', 'price_per_day' => 'day', 'price_per_week' => 'week'] as $field => $short)
                         <td class="text-right">
                             <x-form.input type="number" min="1000" step="1000"
@@ -75,7 +75,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5" class="py-8 text-center text-muted">Chưa có xe nào{{ $type ? ' thuộc loại ' . $type : '' }}.</td>
+                    <td colspan="5" class="py-8 text-center text-fg-muted">Chưa có xe nào{{ $type ? ' thuộc loại ' . $type : '' }}.</td>
                 </tr>
             @endforelse
         </x-table>
