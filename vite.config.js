@@ -10,6 +10,7 @@ export default defineConfig({
                     'resources/views/admin/store-management/storeManagement.form.js',
                     'resources/views/admin/vehicle-management/vehicleManagement.form.js',
                     'resources/views/admin/promotion/promotion.page.js',
+                    'resources/views/layouts/guest.page.js',
                 ],
             refresh: true,
         }),

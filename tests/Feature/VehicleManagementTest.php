@@ -7,6 +7,7 @@ use App\Models\Store;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -17,12 +18,13 @@ class VehicleManagementTest extends TestCase
 
     private User $admin;
     private Store $store;
+    private FilesystemAdapter $disk;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->withoutVite();
-        Storage::fake('public');
+        $this->disk = Storage::fake('public');
 
         $this->admin = User::factory()->admin()->create();
         $this->store = Store::create(['name' => 'CH test', 'address' => 'HCM', 'latitude' => 10.77, 'longitude' => 106.70]);
@@ -69,7 +71,7 @@ class VehicleManagementTest extends TestCase
 
         $vehicle = Vehicle::first();
         $this->assertSame(VehicleStatus::Available, $vehicle->status);
-        Storage::disk('public')->assertExists($vehicle->image);
+        $this->disk->assertExists($vehicle->image);
     }
 
     public function test_bien_so_duoc_chuan_hoa_va_khong_duoc_trung(): void
@@ -138,8 +140,8 @@ class VehicleManagementTest extends TestCase
         $this->actingAs($this->admin)
             ->put("/admin/vehicles/{$vehicle->id}", $this->payload(['image' => UploadedFile::fake()->image('moi.jpg')]));
 
-        Storage::disk('public')->assertMissing($old);
-        Storage::disk('public')->assertExists($vehicle->fresh()->image);
+        $this->disk->assertMissing($old);
+        $this->disk->assertExists($vehicle->fresh()->image);
     }
 
     public function test_khong_xoa_duoc_xe_dang_cho_thue(): void

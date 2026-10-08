@@ -1,0 +1,23 @@
+/* Khung chứa cảnh "thành phố đêm". Canvas do cityScene.js tạo và gắn vào. */
+.scene-host {
+    overflow: hidden;
+    background: #05070a;
+}
+
+.scene-host > canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Không có WebGL (hoặc mất ngữ cảnh đồ họa): nền tĩnh cùng tông màu */
+.scene-host.is-fallback {
+    background:
+        radial-gradient(55% 40% at 50% 72%, rgba(224, 35, 28, .16), transparent 70%),
+        radial-gradient(90% 65% at 50% 100%, rgba(134, 198, 210, .10), transparent 70%),
+        #05070a;
+}
+
+.scene-host.is-fallback > canvas {
+    display: none;
+}
