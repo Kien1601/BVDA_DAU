@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+ * Màu theo vai trò (docs/design/huong-dan-giao-dien.md, mục 10).
+ * Mỗi biến là kênh RGB "r g b" để Tailwind ghép độ trong suốt: bg-page/80, border-fg/30.
+ * data-theme đặt ở <html> (chế độ chung) hoặc ở một vùng con (vùng luôn tối).
+ * data-theme-follow: vùng con nằm trong vùng luôn tối nhưng vẫn theo chế độ chung.
+ */
+[data-theme="dark"],
+html[data-theme="dark"] [data-theme-follow] {
+    --t-page: 5 7 10;
+    --t-card: 10 14 18;
+    --t-card-2: 17 24 32;
+    --t-fg: 223 231 224;
+    --t-fg-soft: 170 180 173;
+    --t-fg-muted: 120 131 124;
+    --t-edge: 223 231 224;
+    --t-edge-a: .13;
+    --t-edge-soft-a: .07;
+    --t-edge-strong-a: .24;
+    --t-solid: 223 231 224;
+    --t-on-solid: 5 7 10;
+    color-scheme: dark;
+}
+
+[data-theme="light"],
+html[data-theme="light"] [data-theme-follow] {
+    --t-page: 244 246 243;
+    --t-card: 255 255 255;
+    --t-card-2: 238 241 237;
+    --t-fg: 11 16 20;
+    --t-fg-soft: 75 86 81;
+    --t-fg-muted: 108 118 113;
+    --t-edge: 5 7 10;
+    --t-edge-a: .10;
+    --t-edge-soft-a: .06;
+    --t-edge-strong-a: .20;
+    --t-solid: 11 16 20;
+    --t-on-solid: 244 246 243;
+    color-scheme: light;
+}

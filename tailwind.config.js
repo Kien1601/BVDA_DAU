@@ -25,6 +25,25 @@ export default {
                 ember: '#ff5a3c',
                 line: 'rgba(223,231,224,.13)',
                 'line-soft': 'rgba(223,231,224,.07)',
+
+                // màu theo vai trò, giá trị đổi theo data-theme (resources/css/app.css)
+                page: 'rgb(var(--t-page) / <alpha-value>)',
+                card: {
+                    DEFAULT: 'rgb(var(--t-card) / <alpha-value>)',
+                    2: 'rgb(var(--t-card-2) / <alpha-value>)',
+                },
+                fg: {
+                    DEFAULT: 'rgb(var(--t-fg) / <alpha-value>)',
+                    soft: 'rgb(var(--t-fg-soft) / <alpha-value>)',
+                    muted: 'rgb(var(--t-fg-muted) / <alpha-value>)',
+                },
+                edge: {
+                    DEFAULT: 'rgb(var(--t-edge) / var(--t-edge-a))',
+                    soft: 'rgb(var(--t-edge) / var(--t-edge-soft-a))',
+                    strong: 'rgb(var(--t-edge) / var(--t-edge-strong-a))',
+                },
+                solid: 'rgb(var(--t-solid) / <alpha-value>)',
+                'on-solid': 'rgb(var(--t-on-solid) / <alpha-value>)',
             },
             letterSpacing: {
                 label: '.2em',
