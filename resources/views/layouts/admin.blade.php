@@ -13,7 +13,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-paper font-sans font-light text-ink antialiased">
+<body class="bg-page font-sans font-light text-fg antialiased">
     <div class="flex min-h-screen">
         @include('layouts.partials.admin-sidebar')
 

@@ -16,12 +16,13 @@
     $n = 0;
 @endphp
 
-<aside class="sticky top-0 flex h-screen w-60 shrink-0 flex-col bg-ink text-bone">
-    <a href="{{ route('admin.dashboard') }}" class="flex h-16 items-center gap-3 border-b border-line-soft px-5">
+{{-- vùng luôn tối ở cả hai chế độ --}}
+<aside data-theme="dark" class="sticky top-0 flex h-screen w-60 shrink-0 flex-col bg-page text-fg">
+    <a href="{{ route('admin.dashboard') }}" class="flex h-16 items-center gap-3 border-b border-edge-soft px-5">
         <span class="h-2 w-2 rounded-full bg-vermilion shadow-[0_0_10px_#e0231c]"></span>
         <span class="leading-none">
             <span class="block text-xs font-medium tracking-[.26em]">RENTAL GPS</span>
-            <span class="mt-1 block text-[8px] tracking-[.34em] text-muted">KHU QUẢN LÝ</span>
+            <span class="mt-1 block text-[8px] tracking-[.34em] text-fg-muted">KHU QUẢN LÝ</span>
         </span>
     </a>
 
@@ -36,9 +37,9 @@
                     <a href="{{ route($item['route']) }}"
                        @if ($active) aria-current="page" @endif
                        class="group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-[11px] font-medium uppercase tracking-label transition-colors duration-300
-                              {{ $active ? 'bg-ink-2 text-bone' : 'text-bone-dim hover:bg-ink-2 hover:text-bone' }}">
+                              {{ $active ? 'bg-card text-fg' : 'text-fg-soft hover:bg-card hover:text-fg' }}">
                         <span class="absolute inset-y-2 left-0 w-0.5 rounded-full {{ $active ? 'bg-vermilion' : 'bg-transparent' }}"></span>
-                        <span class="w-5 tabular-nums transition-colors {{ $active ? 'text-ember' : 'text-muted group-hover:text-ember' }}">
+                        <span class="w-5 tabular-nums transition-colors {{ $active ? 'text-ember' : 'text-fg-muted group-hover:text-ember' }}">
                             {{ sprintf('%02d', $n) }}
                         </span>
                         {{ $item['label'] }}
@@ -48,7 +49,7 @@
         @endforeach
     </nav>
 
-    <div class="border-t border-line-soft px-5 py-4 text-[9px] uppercase tracking-label text-muted">
+    <div class="border-t border-edge-soft px-5 py-4 text-[9px] uppercase tracking-label text-fg-muted">
         © {{ date('Y') }} Rental GPS
     </div>
 </aside>

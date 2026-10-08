@@ -18,7 +18,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/views/layouts/customer.page.js'])
     @stack('styles')
 </head>
-<body class="bg-ink font-sans font-light text-bone antialiased selection:bg-vermilion selection:text-white">
+<body class="bg-page font-sans font-light text-fg antialiased selection:bg-vermilion selection:text-white">
     @include('layouts.partials.customer-header')
 
     <main>

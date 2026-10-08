@@ -12,8 +12,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/views/layouts/guest.page.js'])
 </head>
-<body class="bg-ink font-sans font-light text-bone antialiased">
-    <div class="relative min-h-screen overflow-hidden">
+<body class="bg-page font-sans font-light text-fg antialiased">
+    {{-- vùng luôn tối: nền thành phố đêm; riêng thẻ form theo chế độ chung (data-theme-follow) --}}
+    <div data-theme="dark" class="relative min-h-screen overflow-hidden bg-page text-fg">
         {{-- cảnh "thành phố đêm", chất lượng thấp: chỉ là nền phía sau form --}}
         <div id="city-scene" class="scene-host absolute inset-0" data-quality="low" aria-hidden="true"></div>
 
@@ -25,15 +26,15 @@
                 <span class="h-2 w-2 rounded-full bg-vermilion shadow-[0_0_12px_#e0231c]"></span>
                 <span class="leading-none">
                     <span class="block text-sm font-medium tracking-[.26em]">RENTAL GPS</span>
-                    <span class="mt-1.5 block text-[9px] tracking-[.34em] text-bone-dim">THUÊ XE · ĐỊNH VỊ THỜI GIAN THỰC</span>
+                    <span class="mt-1.5 block text-[9px] tracking-[.34em] text-fg-soft">THUÊ XE · ĐỊNH VỊ THỜI GIAN THỰC</span>
                 </span>
             </a>
 
-            <div class="w-full max-w-md rounded-xl border border-white/10 bg-paper p-8 text-ink shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)]">
+            <div data-theme-follow class="w-full max-w-md rounded-xl border border-white/10 bg-page p-8 text-fg shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)]">
                 {{ $slot }}
             </div>
 
-            <p class="mt-8 text-[10px] uppercase tracking-label text-muted">
+            <p class="mt-8 text-[10px] uppercase tracking-label text-fg-muted">
                 © {{ date('Y') }} Rental GPS
             </p>
         </div>
