@@ -105,12 +105,12 @@ Biến CSS khai báo trong `resources/css/app.css`, dạng kênh RGB `r g b` đ�
 | `bg-page` | `--t-page` | `5 7 10` | `244 246 243` | Nền trang |
 | `bg-card` | `--t-card` | `10 14 18` | `255 255 255` | Nền thẻ, bảng, ô nhập, form |
 | `bg-card-2` | `--t-card-2` | `17 24 32` | `238 241 237` | Nền khi rê chuột, vùng nhấn nhẹ, ô chỉ đọc |
-| `text-fg` | `--t-fg` | `223 231 224` | `11 16 20` | Chữ chính |
-| `text-fg-soft` | `--t-fg-soft` | `170 180 173` | `75 86 81` | Chữ phụ |
-| `text-fg-muted` | `--t-fg-muted` | `120 131 124` | `108 118 113` | Nhãn nhỏ |
-| `border-edge` | `--t-edge` + `--t-edge-a` | độ mờ `.13` | độ mờ `.10` | Đường kẻ thường |
-| `border-edge-soft` | `--t-edge-soft-a` | `.07` | `.06` | Đường kẻ rất mờ |
-| `border-edge-strong` | `--t-edge-strong-a` | `.24` | `.20` | Viền nút phụ, ô nhập |
+| `text-fg` | `--t-fg` | `223 231 224` | `5 7 10` | Chữ chính |
+| `text-fg-soft` | `--t-fg-soft` | `170 180 173` | `38 46 43` | Chữ phụ |
+| `text-fg-muted` | `--t-fg-muted` | `120 131 124` | `70 79 75` | Nhãn nhỏ |
+| `border-edge` | `--t-edge` + `--t-edge-a` | độ mờ `.13` | độ mờ `.16` | Đường kẻ thường |
+| `border-edge-soft` | `--t-edge-soft-a` | `.07` | `.09` | Đường kẻ rất mờ |
+| `border-edge-strong` | `--t-edge-strong-a` | `.24` | `.28` | Viền nút phụ, ô nhập |
 | `bg-solid` | `--t-solid` | `223 231 224` | `11 16 20` | Nền nút chính |
 | `text-on-solid` | `--t-on-solid` | `5 7 10` | `244 246 243` | Chữ trên nút chính |
 
@@ -155,10 +155,40 @@ cũng giữ cố định.
 Cảnh 3D (`resources/js/shared/scene/`) luôn là cảnh đêm, không đổi màu theo chế độ.
 Bản đồ giám sát GPS của nhân viên giữ nền đường phố, không đổi theo chế độ.
 
+### Tương phản chế độ sáng
+
+Chế độ sáng được tăng tương phản để đọc rõ trên máy chiếu. Chế độ tối không đổi.
+Tất cả nằm trong `resources/css/app.css`, chỉ áp dụng khi `<html data-theme="light">`.
+
+| Vai trò | Trước | Sau | Tương phản trên `#f4f6f3` / `#ffffff` |
+|---|---|---|---|
+| `--t-fg` (chữ chính) | `11 16 20` | `5 7 10` | 18.6 / 20.2 |
+| `--t-fg-soft` (chữ phụ) | `75 86 81` | `38 46 43` | 12.8 / 13.9 |
+| `--t-fg-muted` (nhãn nhỏ) | `108 118 113` | `70 79 75` | 7.8 / 8.5 |
+| `--t-edge-a` (đường kẻ thường) | `.10` | `.16` | — |
+| `--t-edge-strong-a` (viền nút phụ, ô nhập) | `.20` | `.28` | — |
+| `--t-edge-soft-a` (đường kẻ rất mờ) | `.06` | `.09` | — |
+
+- **Nét chữ:** ở chế độ sáng, `.font-light` (300) được nâng lên 400
+  (`html[data-theme="light"] .font-light`). Nét 300 chỉ dùng ở chế độ tối.
+- **Màu chữ cố định đã ghi đè ở chế độ sáng** (chọn cho nền tối, quá nhạt trên nền sáng):
+
+  | Class | Gốc | Chế độ sáng | Tương phản trên `#f4f6f3` / `#ffffff` |
+  |---|---|---|---|
+  | `text-ember`, `group-hover:text-ember`, `hover:text-ember` | `#ff5a3c` | `#c42a12` | 5.2 / 5.7 |
+  | `text-emerald-400` | `#34d399` | `#047857` | 5.1 / 5.5 |
+  | `text-gray-400` | `#9ca3af` | `#4b5563` | 7.0 / 7.6 |
+
+  Ghi đè bỏ qua phần tử trong vùng luôn tối bằng `:not([data-theme="dark"] *)`, kèm một selector
+  riêng `[data-theme-follow] …` cho vùng theo chế độ chung nằm trong vùng tối.
+  `text-vermilion` và nền đỏ son của nút giữ nguyên.
+
 ### Thêm giao diện mới
 
 1. Chỉ dùng các lớp ở bảng trên, ghép đúng cặp; không dùng mã màu cứng, không dùng `bg-white`, `text-black`.
 2. Ưu tiên component dùng chung (`<x-button>`, `<x-form.input>`, `<x-table>`...): chúng đã đúng ở cả hai chế độ.
 3. Vùng cần cố định một chế độ: thêm `data-theme` lên thẻ ngoài cùng của vùng, ghi vào bảng "Vùng luôn tối".
-4. Phần tự vẽ màu bằng JavaScript: đọc `document.documentElement.dataset.theme` lúc tạo và nghe `theme:change`.
-5. Soát ở trang mẫu `/admin/ui` (chỉ máy dev): hai cột sáng/tối đặt cạnh nhau.
+4. Màu chữ cố định chọn cho nền tối (ví dụ `text-*-300`, `text-*-400`, `text-ember`) phải có ghi đè cho chế độ sáng
+   trong `app.css` (mẫu ở đoạn "Tương phản chế độ sáng"), đạt tối thiểu 4.5:1 trên `#f4f6f3` và `#ffffff`.
+5. Phần tự vẽ màu bằng JavaScript: đọc `document.documentElement.dataset.theme` lúc tạo và nghe `theme:change`.
+6. Soát ở trang mẫu `/admin/ui` (chỉ máy dev): hai cột sáng/tối đặt cạnh nhau.

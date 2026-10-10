@@ -25,18 +25,19 @@ html[data-theme="dark"] [data-theme-follow] {
     color-scheme: dark;
 }
 
+/* Chế độ sáng: chữ và đường kẻ đậm hơn để đọc rõ trên máy chiếu (mục 10, "Tương phản chế độ sáng") */
 [data-theme="light"],
 html[data-theme="light"] [data-theme-follow] {
     --t-page: 244 246 243;
     --t-card: 255 255 255;
     --t-card-2: 238 241 237;
-    --t-fg: 11 16 20;
-    --t-fg-soft: 75 86 81;
-    --t-fg-muted: 108 118 113;
+    --t-fg: 5 7 10;
+    --t-fg-soft: 38 46 43;
+    --t-fg-muted: 70 79 75;
     --t-edge: 5 7 10;
-    --t-edge-a: .10;
-    --t-edge-soft-a: .06;
-    --t-edge-strong-a: .20;
+    --t-edge-a: .16;
+    --t-edge-soft-a: .09;
+    --t-edge-strong-a: .28;
     --t-solid: 11 16 20;
     --t-on-solid: 244 246 243;
     color-scheme: light;
@@ -46,4 +47,35 @@ html[data-theme="light"] [data-theme-follow] {
 html[data-theme="dark"] .theme-icon-moon,
 html[data-theme="light"] .theme-icon-sun {
     display: none;
+}
+
+/* ---------- Tương phản chế độ sáng (chỉ áp dụng khi <html data-theme="light">) ---------- */
+
+/* Nét 300 quá mảnh trên nền sáng khi chiếu: nâng lên 400. Độ ưu tiên (0,2,1) thắng .font-light (0,1,0) của Tailwind. */
+html[data-theme="light"] .font-light {
+    font-weight: 400;
+}
+
+/*
+ * Màu chữ cố định chọn cho nền tối, quá nhạt trên nền sáng: thay bằng màu đạt tối thiểu 4.5:1
+ * trên #f4f6f3 và #ffffff. Bỏ qua phần tử nằm trong vùng luôn tối ([data-theme="dark"] *),
+ * trừ khi nằm trong vùng theo chế độ chung ([data-theme-follow], ví dụ thẻ form đăng nhập).
+ */
+html[data-theme="light"] .text-ember:not([data-theme="dark"] *),
+html[data-theme="light"] [data-theme-follow] .text-ember,
+html[data-theme="light"] .group:hover .group-hover\:text-ember:not([data-theme="dark"] *),
+html[data-theme="light"] [data-theme-follow] .group:hover .group-hover\:text-ember,
+html[data-theme="light"] .hover\:text-ember:hover:not([data-theme="dark"] *),
+html[data-theme="light"] [data-theme-follow] .hover\:text-ember:hover {
+    color: #c42a12;
+}
+
+html[data-theme="light"] .text-emerald-400:not([data-theme="dark"] *),
+html[data-theme="light"] [data-theme-follow] .text-emerald-400 {
+    color: #047857;
+}
+
+html[data-theme="light"] .text-gray-400:not([data-theme="dark"] *),
+html[data-theme="light"] [data-theme-follow] .text-gray-400 {
+    color: #4b5563;
 }
