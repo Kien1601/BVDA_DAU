@@ -17,14 +17,9 @@ export default {
                 sans: ['Onest', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                ink: { DEFAULT: '#05070a', 2: '#0a0e12' },
-                bone: { DEFAULT: '#dfe7e0', dim: '#aab4ad' },
-                muted: '#78837c',
-                paper: '#f4f6f3',
+                // màu nhấn, cố định ở cả hai chế độ
                 vermilion: '#e0231c',
                 ember: '#ff5a3c',
-                line: 'rgba(223,231,224,.13)',
-                'line-soft': 'rgba(223,231,224,.07)',
 
                 // màu theo vai trò, giá trị đổi theo data-theme (resources/css/app.css)
                 page: 'rgb(var(--t-page) / <alpha-value>)',
