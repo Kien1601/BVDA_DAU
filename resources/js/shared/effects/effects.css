@@ -34,7 +34,7 @@
     border-radius: inherit;
     opacity: 0;
     transition: opacity .4s;
-    background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(223, 231, 224, .14), transparent 55%);
+    background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgb(var(--t-fg) / .14), transparent 55%);
 }
 
 [data-tilt]:hover .tilt-glare {

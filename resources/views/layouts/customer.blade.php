@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="dark" data-area-default="dark">
 <head>
     <meta charset="utf-8">
+    @include('layouts.partials.theme-boot')
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Thuê xe máy') — Rental GPS</title>
@@ -18,7 +19,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/views/layouts/customer.page.js'])
     @stack('styles')
 </head>
-<body class="bg-ink font-sans font-light text-bone antialiased selection:bg-vermilion selection:text-white">
+<body class="bg-page font-sans font-light text-fg antialiased selection:bg-vermilion selection:text-white">
     @include('layouts.partials.customer-header')
 
     <main>

@@ -1,12 +1,12 @@
 {{--
     Nút dùng chung.
-    variant:
-      primary       nền tối, rê chuột thì đỏ son trượt lên (khu quản lý)
-      secondary     viền mảnh (khu quản lý)
+    variant (màu theo vai trò nên tự đúng ở cả chế độ sáng và tối):
+      primary       nền đặc (bg-solid), rê chuột thì đỏ son trượt lên
+      secondary     viền mảnh
       link          chữ
       link-danger   chữ đỏ, cho thao tác xóa
-      light         nền sáng, rê chuột thì đỏ son trượt lên (trang khách, nền tối)
-      outline-light viền mảnh trên nền tối (trang khách)
+      light         giống primary, giữ tên cho các trang đang dùng
+      outline-light giống secondary, giữ tên cho các trang đang dùng
     Có href thì thành thẻ <a>, không có thì là <button>.
 --}}
 @props(['variant' => 'primary', 'href' => null, 'type' => 'submit'])
@@ -17,13 +17,17 @@
           . 'focus:outline-none focus-visible:ring-2 focus-visible:ring-vermilion/50 '
           . 'disabled:opacity-50 disabled:pointer-events-none';
 
+    // chữ trắng khi rê chuột: lúc đó nền là đỏ son, cố định ở cả hai chế độ
+    $solid = 'px-5 py-2.5 bg-solid text-on-solid hover:text-white';
+    $outline = 'px-5 py-2.5 border border-edge-strong text-fg hover:border-fg/40';
+
     $variants = [
-        'primary'       => 'px-5 py-2.5 bg-ink text-bone',
-        'secondary'     => 'px-5 py-2.5 border border-ink/15 text-ink hover:border-ink/40',
-        'link'          => 'text-ink/70 hover:text-ink',
+        'primary'       => $solid,
+        'secondary'     => $outline,
+        'link'          => 'text-fg-soft hover:text-fg',
         'link-danger'   => 'text-vermilion hover:text-ember',
-        'light'         => 'px-5 py-2.5 bg-bone text-ink hover:text-white',
-        'outline-light' => 'px-5 py-2.5 border border-line text-bone hover:border-bone/50',
+        'light'         => $solid,
+        'outline-light' => $outline,
     ];
 
     $classes = $base . ' ' . ($variants[$variant] ?? $variants['primary']);

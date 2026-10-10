@@ -1,7 +1,7 @@
 <div class="grid grid-cols-1 gap-10 lg:grid-cols-3">
     <div class="space-y-8 lg:col-span-2">
         <section>
-            <div class="mb-4 text-[10px] font-medium uppercase tracking-label text-muted">01 · Thông tin xe</div>
+            <div class="mb-4 text-[10px] font-medium uppercase tracking-label text-fg-muted">01 · Thông tin xe</div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <x-form.input name="license_plate" label="Biển số" :value="$vehicle->license_plate"
                               placeholder="VD: 59X1-123.45" required autofocus />
@@ -17,7 +17,7 @@
         </section>
 
         <section>
-            <div class="mb-4 text-[10px] font-medium uppercase tracking-label text-muted">02 · Giá thuê (đồng)</div>
+            <div class="mb-4 text-[10px] font-medium uppercase tracking-label text-fg-muted">02 · Giá thuê (đồng)</div>
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
                 <x-form.input type="number" name="price_per_hour" label="Theo giờ" :value="$vehicle->price_per_hour" min="1000" step="1000" required />
                 <x-form.input type="number" name="price_per_day" label="Theo ngày" :value="$vehicle->price_per_day" min="1000" step="1000" required />
@@ -26,7 +26,7 @@
         </section>
 
         <section>
-            <div class="mb-4 text-[10px] font-medium uppercase tracking-label text-muted">03 · Thiết bị định vị</div>
+            <div class="mb-4 text-[10px] font-medium uppercase tracking-label text-fg-muted">03 · Thiết bị định vị</div>
             @include('admin.vehicle-management.partials.gps-device-field')
         </section>
     </div>

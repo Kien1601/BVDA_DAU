@@ -27,7 +27,7 @@
     <label class="inline-flex items-center gap-3 text-sm sm:col-span-2">
         <input type="hidden" name="is_active" value="0">
         <input type="checkbox" name="is_active" value="1"
-               class="h-4 w-4 rounded border-ink/30 text-vermilion focus:ring-vermilion/40"
+               class="h-4 w-4 rounded border-edge-strong bg-card text-vermilion focus:ring-vermilion/40"
                @checked(old('is_active', $promotion->is_active))>
         Bật mã (khách dùng được trong thời gian hiệu lực)
     </label>

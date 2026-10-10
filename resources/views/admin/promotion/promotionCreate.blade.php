@@ -5,12 +5,12 @@
 @section('content')
     <x-page-header eyebrow="Khuyến mãi" title="Tạo mã khuyến mãi" />
 
-    <form method="POST" action="{{ route('admin.promotions.store') }}" class="max-w-3xl rounded-lg border border-ink/10 bg-white p-6">
+    <form method="POST" action="{{ route('admin.promotions.store') }}" class="max-w-3xl rounded-lg border border-edge bg-card p-6">
         @csrf
 
         @include('admin.promotion.partials.promotion-form')
 
-        <div class="mt-8 flex justify-end gap-3 border-t border-ink/10 pt-5">
+        <div class="mt-8 flex justify-end gap-3 border-t border-edge pt-5">
             <x-button variant="secondary" :href="route('admin.promotions.index')">Hủy</x-button>
             <x-button>Tạo mã</x-button>
         </div>

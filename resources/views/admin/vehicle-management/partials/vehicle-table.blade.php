@@ -12,7 +12,7 @@
     @forelse ($vehicles as $vehicle)
         <tr>
             <td>
-                <div class="h-12 w-16 overflow-hidden rounded border border-ink/10 bg-paper">
+                <div class="h-12 w-16 overflow-hidden rounded border border-edge bg-page">
                     @if ($vehicle->imageUrl())
                         <img src="{{ $vehicle->imageUrl() }}" alt="{{ $vehicle->name }}" class="h-full w-full object-cover" loading="lazy">
                     @endif
@@ -20,15 +20,15 @@
             </td>
             <td>
                 <div class="font-normal tabular-nums">{{ $vehicle->license_plate }}</div>
-                <div class="text-xs text-muted">{{ $vehicle->name }} · {{ $vehicle->type }}</div>
+                <div class="text-xs text-fg-muted">{{ $vehicle->name }} · {{ $vehicle->type }}</div>
             </td>
-            <td class="text-ink/80">{{ $vehicle->store->name }}</td>
+            <td class="text-fg-soft">{{ $vehicle->store->name }}</td>
             <td class="text-right tabular-nums">{{ number_format($vehicle->price_per_day) }} đ</td>
             <td class="tabular-nums">
                 @if ($vehicle->gps_device_id)
-                    <span class="text-ink/80">{{ $vehicle->gps_device_id }}</span>
+                    <span class="text-fg-soft">{{ $vehicle->gps_device_id }}</span>
                 @else
-                    <span class="text-muted">Chưa gắn</span>
+                    <span class="text-fg-muted">Chưa gắn</span>
                 @endif
             </td>
             <td>
@@ -49,7 +49,7 @@
         </tr>
     @empty
         <tr>
-            <td colspan="7" class="py-8 text-center text-muted">
+            <td colspan="7" class="py-8 text-center text-fg-muted">
                 {{ array_filter($filters) ? 'Không có xe nào phù hợp bộ lọc.' : 'Chưa có xe nào.' }}
             </td>
         </tr>

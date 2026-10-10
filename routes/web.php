@@ -68,6 +68,11 @@ Route::middleware(['auth', 'role:staff,admin'])
             Route::patch('/promotions/{promotion}/toggle', [Admin\PromotionController::class, 'toggle'])
                 ->name('promotions.toggle');
         });
+
+        // Trang mẫu giao diện để soát chế độ sáng/tối, chỉ có trên máy dev
+        if (app()->isLocal()) {
+            Route::view('/ui', 'admin.ui.ui')->middleware('can:user.manage')->name('ui');
+        }
     });
 
 require __DIR__.'/auth.php';

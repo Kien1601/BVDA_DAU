@@ -6,12 +6,12 @@
     <x-page-header eyebrow="Xe cho thuê" title="Thêm xe" />
 
     <form method="POST" action="{{ route('admin.vehicles.store') }}" enctype="multipart/form-data"
-          class="rounded-lg border border-ink/10 bg-white p-6">
+          class="rounded-lg border border-edge bg-card p-6">
         @csrf
 
         @include('admin.vehicle-management.partials.vehicle-form')
 
-        <div class="mt-8 flex justify-end gap-3 border-t border-ink/10 pt-5">
+        <div class="mt-8 flex justify-end gap-3 border-t border-edge pt-5">
             <x-button variant="secondary" :href="route('admin.vehicles.index')">Hủy</x-button>
             <x-button>Lưu xe</x-button>
         </div>

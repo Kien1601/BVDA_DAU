@@ -25,8 +25,8 @@
         @forelse ($stores as $store)
             <tr>
                 <td class="font-normal">{{ $store->name }}</td>
-                <td class="text-ink/80">{{ $store->address }}</td>
-                <td class="tabular-nums text-ink/80">{{ $store->phone ?? '—' }}</td>
+                <td class="text-fg-soft">{{ $store->address }}</td>
+                <td class="tabular-nums text-fg-soft">{{ $store->phone ?? '—' }}</td>
                 <td class="text-right tabular-nums">{{ $store->vehicles_count }}</td>
                 <td class="whitespace-nowrap text-right">
                     <x-button variant="link" :href="route('admin.stores.edit', $store)">Sửa</x-button>
@@ -41,7 +41,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="5" class="py-8 text-center text-muted">
+                <td colspan="5" class="py-8 text-center text-fg-muted">
                     {{ $keyword !== '' ? 'Không tìm thấy cửa hàng phù hợp.' : 'Chưa có cửa hàng nào.' }}
                 </td>
             </tr>
