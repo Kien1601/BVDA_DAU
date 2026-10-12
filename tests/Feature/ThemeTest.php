@@ -24,11 +24,15 @@ class ThemeTest extends TestCase
             ->assertSee('data-theme-toggle', false);
     }
 
-    public function test_man_hinh_mo_dau_trang_chu_luon_toi(): void
+    public function test_man_hinh_mo_dau_trang_chu_doi_theo_che_do(): void
     {
+        // màn hình mở đầu có cảnh ngày/đêm nên theo chế độ chung, không bị ép tối;
+        // header nằm trên nó cũng vậy
         $this->get('/')
             ->assertOk()
-            ->assertSee('<section id="hero" data-theme="dark"', false);
+            ->assertSee('<section id="hero" class=', false)
+            ->assertDontSee('<section id="hero" data-theme="dark"', false)
+            ->assertDontSee('overHero', false);
     }
 
     public function test_the_form_dang_nhap_theo_che_do_chung(): void

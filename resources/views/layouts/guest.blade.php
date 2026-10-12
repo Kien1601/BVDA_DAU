@@ -14,13 +14,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/views/layouts/guest.page.js'])
 </head>
 <body class="bg-page font-sans font-light text-fg antialiased">
-    {{-- vùng luôn tối: nền thành phố đêm; riêng thẻ form theo chế độ chung (data-theme-follow) --}}
-    <div data-theme="dark" class="relative min-h-screen overflow-hidden bg-page text-fg">
-        {{-- cảnh "thành phố đêm", chất lượng thấp: chỉ là nền phía sau form --}}
+    {{-- nền thành phố đổi ngày/đêm theo chế độ chung --}}
+    <div class="relative min-h-screen overflow-hidden bg-page text-fg">
+        {{-- cảnh thành phố, chất lượng thấp: chỉ là nền phía sau form --}}
         <div id="city-scene" class="scene-host absolute inset-0" data-quality="low" aria-hidden="true"></div>
 
-        {{-- làm tối nhẹ phần giữa để form luôn nổi rõ trên nền cảnh --}}
-        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_55%_at_50%_50%,rgba(5,7,10,.55),rgba(5,7,10,.15)_70%,transparent)]"></div>
+        {{-- lớp phủ cùng màu nền ở giữa, để form luôn nổi rõ trên cảnh (tối khi đêm, sáng khi ngày) --}}
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_55%_at_50%_50%,rgb(var(--t-page)/.55),rgb(var(--t-page)/.15)_70%,transparent)]"></div>
 
         <x-theme-toggle class="absolute right-4 top-4 z-20 sm:right-6 sm:top-6" />
 
@@ -33,7 +33,7 @@
                 </span>
             </a>
 
-            <div data-theme-follow class="w-full max-w-md rounded-xl border border-white/10 bg-page p-8 text-fg shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)]">
+            <div data-theme-follow class="w-full max-w-md rounded-xl border border-edge bg-page p-8 text-fg shadow-[0_30px_80px_-20px_rgba(0,0,0,.8)]">
                 {{ $slot }}
             </div>
 

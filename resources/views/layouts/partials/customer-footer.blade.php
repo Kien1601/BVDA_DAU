@@ -6,7 +6,7 @@
                 <span class="text-xs font-medium tracking-[.26em]">RENTAL GPS</span>
             </div>
             <p class="mt-4 max-w-sm text-sm leading-relaxed text-fg-muted">
-                Thuê xe máy tại TP.HCM. Đặt nhanh, nhận xe tại cửa hàng, đội xe được theo dõi bằng GPS.
+                Thuê xe máy tại Đà Nẵng. Đặt nhanh, nhận xe tại cửa hàng, đội xe được theo dõi bằng GPS.
             </p>
         </div>
 

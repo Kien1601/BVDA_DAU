@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Thuê xe máy') — Rental GPS</title>
-    <meta name="description" content="@yield('description', 'Thuê xe máy tại TP.HCM, đặt nhanh, nhận xe tại cửa hàng, đội xe được theo dõi bằng GPS.')">
+    <meta name="description" content="@yield('description', 'Thuê xe máy tại Đà Nẵng, đặt nhanh, nhận xe tại cửa hàng, đội xe được theo dõi bằng GPS.')">
 
     {{-- bật hiệu ứng hiện dần trước khi trang vẽ, để không bị nháy --}}
     <script>document.documentElement.classList.add('has-reveal');</script>

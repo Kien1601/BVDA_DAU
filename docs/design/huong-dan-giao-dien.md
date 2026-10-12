@@ -147,8 +147,6 @@ cũng giữ cố định.
 | Vùng | Ở đâu |
 |---|---|
 | Thanh bên khu quản lý | `layouts/partials/admin-sidebar.blade.php` (`<aside data-theme="dark">`) |
-| Màn hình mở đầu trang chủ | `customer/home/home.blade.php` (`section#hero`) |
-| Header trang chủ khi còn nằm trên màn hình mở đầu | `layouts/partials/customer-header.blade.php` |
 | Nền thành phố trang đăng nhập/đăng ký | `layouts/guest.blade.php` (thẻ form bên trong có `data-theme-follow`) |
 | Khung ảnh thẻ xe (kiểu "studio") | `components/vehicle-card.blade.php` |
 
