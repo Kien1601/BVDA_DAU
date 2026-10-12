@@ -6,15 +6,12 @@
     ];
 @endphp
 
-{{-- Trang chủ: khi đầu trang còn trong suốt nằm trên màn hình mở đầu (luôn tối) thì header dùng màu tối
-     để chữ đọc được ở cả chế độ sáng; cuộn xuống hoặc mở menu thì theo chế độ chung. --}}
-@php $overHero = request()->routeIs('home'); @endphp
-<header x-data="{ open: false, stuck: false, overHero: @js($overHero) }"
+{{-- Header theo chế độ chung: màn hình mở đầu trang chủ cũng đổi theo chế độ (cảnh ngày/đêm),
+     nên chữ header ở chế độ sáng là màu tối, ở chế độ tối là màu sáng. --}}
+<header x-data="{ open: false, stuck: false }"
         x-init="stuck = window.scrollY > 40"
         @scroll.window.passive="stuck = window.scrollY > 40"
         :class="stuck || open ? 'bg-page/80 backdrop-blur-md border-edge-soft' : 'border-transparent'"
-        @if ($overHero) data-theme="dark" @endif
-        :data-theme="overHero && !stuck && !open ? 'dark' : null"
         class="fixed inset-x-0 top-0 z-50 border-b transition-colors duration-500">
     <div class="mx-auto flex h-20 max-w-7xl items-center gap-8 px-5 lg:px-8">
         <a href="{{ route('home') }}" class="flex items-center gap-3">

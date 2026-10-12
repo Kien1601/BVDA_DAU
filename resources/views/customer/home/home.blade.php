@@ -3,19 +3,19 @@
 @section('title', 'Thuê xe máy, theo dõi bằng GPS')
 
 @section('content')
-    {{-- ============================================ màn hình mở đầu (vùng luôn tối) --}}
-    <section id="hero" data-theme="dark" class="relative h-[100svh] min-h-[640px] overflow-hidden">
+    {{-- ============================================ màn hình mở đầu (cảnh ngày/đêm theo chế độ chung) --}}
+    <section id="hero" class="relative h-[100svh] min-h-[640px] overflow-hidden">
         <div id="city-scene" class="scene-host absolute inset-0" data-quality="high" aria-hidden="true"></div>
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-page/70 via-page/10 to-page"></div>
 
         <div class="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-end px-5 pb-14 lg:px-8">
             <div data-reveal class="flex items-center gap-2.5 text-[10px] font-medium uppercase tracking-label text-fg-soft">
                 <span class="h-1.5 w-1.5 rounded-full bg-vermilion shadow-[0_0_10px_#e0231c]"></span>
-                Thuê xe máy tại TP.HCM
+                Thuê xe máy tại Đà Nẵng
             </div>
 
             <h1 data-reveal style="--reveal-delay: 100ms"
-                class="mt-5 max-w-3xl text-4xl font-normal uppercase leading-[1.05] tracking-tight [text-shadow:0_2px_34px_rgba(3,6,8,.7)] sm:text-5xl lg:text-6xl">
+                class="mt-5 max-w-3xl text-4xl font-normal uppercase leading-[1.05] tracking-tight [text-shadow:0_2px_30px_rgb(var(--t-page)/.75)] sm:text-5xl lg:text-6xl">
                 Thuê xe trong vài phút.<br>Biết xe ở đâu từng giây.
             </h1>
 
