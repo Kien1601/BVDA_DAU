@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Promotion extends Model
 {
@@ -83,5 +84,9 @@ class Promotion extends Model
             'disabled'  => $query->where('is_active', false),
             default     => $query,
         };
+    }
+        public function rentalOrders(): HasMany
+    {
+        return $this->hasMany(RentalOrder::class);
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 
+
 class Vehicle extends Model
 {
     use SoftDeletes;
@@ -56,9 +57,11 @@ class Vehicle extends Model
      * C2.3 - Điều kiện xóa xe.
      * TODO (C5): thêm điều kiện không còn đơn pending/approved/active.
      */
+        /** C2.3 - không xóa được xe đang cho thuê hoặc còn đơn chờ duyệt / đã duyệt / đang thuê */
     public function canBeDeleted(): bool
     {
-        return $this->status !== VehicleStatus::Rented;
+        return $this->status !== VehicleStatus::Rented
+            && ! $this->rentalOrders()->blocking()->exists();
     }
 
     public function imageUrl(): ?string
@@ -81,4 +84,8 @@ class Vehicle extends Model
     {
         return $query->where('status', '!=', VehicleStatus::Maintenance->value);
     }
+
+    
+
+    
 }

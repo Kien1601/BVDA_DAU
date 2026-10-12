@@ -63,9 +63,12 @@ class PromotionController extends Controller
         return back()->with('success', ($promotion->is_active ? 'Đã bật' : 'Đã tắt') . " mã {$promotion->code}.");
     }
 
-    public function destroy(Promotion $promotion)
+       public function destroy(Promotion $promotion)
     {
-        // TODO (B2): không cho xóa mã đã được dùng trong đơn thuê — khi đó chỉ được tắt
+        if ($promotion->rentalOrders()->exists()) {
+            return back()->with('error', "Mã {$promotion->code} đã được dùng trong đơn thuê, không thể xóa. Bạn có thể tắt mã.");
+        }
+
         $code = $promotion->code;
         $promotion->delete();
 
