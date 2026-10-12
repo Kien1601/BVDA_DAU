@@ -15,6 +15,7 @@ export default defineConfig({
                     'resources/views/customer/home/home.page.js',
                     'resources/views/customer/vehicle-detail/vehicleDetail.page.js',
                     'resources/views/customer/store-location/storeLocation.page.js',
+                    'resources/views/customer/booking/booking.page.js',
                 ],
             refresh: true,
         }),

@@ -54,11 +54,15 @@
                 </dl>
 
                 <div data-reveal style="--reveal-delay: 320ms" class="mt-8 flex flex-wrap items-center gap-4">
-                    @guest
-                        <x-button variant="light" :href="route('login')">Đăng nhập để đặt thuê</x-button>
+                                        @guest
+                        {{-- route đặt thuê yêu cầu đăng nhập: khách được đưa tới trang đăng nhập rồi quay lại đúng đây --}}
+                        <x-button variant="light" :href="route('booking.create', $vehicle)">Đăng nhập để đặt thuê</x-button>
                     @else
-                        {{-- B2: đổi thành nút đặt thuê khi có chức năng đặt thuê --}}
-                        <x-button variant="light" type="button" disabled>Đặt thuê (sắp mở)</x-button>
+                        @can('booking.create')
+                            <x-button variant="light" :href="route('booking.create', $vehicle)">Đặt thuê xe</x-button>
+                        @else
+                            <x-button variant="light" type="button" disabled>Chỉ tài khoản khách hàng đặt được</x-button>
+                        @endcan
                     @endguest
                     <x-button variant="outline-light" :href="route('vehicles.index', ['type' => $vehicle->type])">Xe cùng loại</x-button>
                 </div>

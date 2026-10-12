@@ -1,15 +1,31 @@
 <?php
 
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\Customer;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Customer;
 
 // ================= TRANG KHÁCH (công khai, không cần đăng nhập) =================
 Route::get('/', [Customer\HomeController::class, 'index'])->name('home');
 Route::get('/vehicles', [Customer\VehicleController::class, 'index'])->name('vehicles.index');
 Route::get('/vehicles/{vehicle}', [Customer\VehicleController::class, 'show'])->name('vehicles.show');
 Route::get('/stores', [Customer\StoreController::class, 'index'])->name('stores.index');
+
+// ================= ĐẶT THUÊ (khách hàng đã đăng nhập) =================
+// B2 - chỉ tài khoản khách hàng (quyền booking.create)
+Route::middleware('auth')->group(function () {
+    Route::middleware('can:booking.create')->group(function () {
+        Route::get('/vehicles/{vehicle}/book', [Customer\BookingController::class, 'create'])->name('booking.create');
+        Route::post('/vehicles/{vehicle}/book', [Customer\BookingController::class, 'store'])->name('booking.store');
+        Route::post('/vehicles/{vehicle}/quote', [Customer\BookingController::class, 'quote'])
+            ->middleware('throttle:60,1')
+            ->name('booking.quote');
+    });
+
+    // Xem và hủy đơn: kiểm tra bằng RentalOrderPolicy (chủ đơn)
+    Route::get('/booking/{order}', [Customer\BookingController::class, 'show'])->name('booking.show');
+    Route::post('/booking/{order}/cancel', [Customer\BookingController::class, 'cancel'])->name('booking.cancel');
+});
 
 // Route mặc định của Breeze, giữ tạm vì menu Breeze đang dùng
 Route::get('/dashboard', function () {
@@ -25,6 +41,7 @@ Route::middleware('auth')->group(function () {
 // ================= KHU QUẢN LÝ (staff, admin) =================
 // Lớp 1: auth (đã đăng nhập) -> role (đúng vai trò)
 // Lớp 2: can:<quyền> cho từng chức năng
+// CHỈ đặt ở đây route của khu quản lý. Route của khách hàng đặt ở các phần phía trên.
 Route::middleware(['auth', 'role:staff,admin'])
     ->prefix('admin')->name('admin.')
     ->group(function () {
@@ -44,13 +61,12 @@ Route::middleware(['auth', 'role:staff,admin'])
                 ->name('gps-monitor.positions');
         });
 
-        // Các chức năng quản lý sau này (xe, cửa hàng, đơn thuê...) thêm vào đây
-                // C3 - Quản lý cửa hàng (chỉ admin)
+        // C3 - Quản lý cửa hàng (chỉ admin)
         Route::middleware('can:store.manage')->group(function () {
             Route::resource('stores', Admin\StoreController::class)->except(['show']);
         });
 
-                // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete
+        // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete
         Route::middleware('can:vehicle.manage')->group(function () {
             Route::resource('vehicles', Admin\VehicleController::class)->except(['show', 'destroy']);
         });
@@ -58,7 +74,7 @@ Route::middleware(['auth', 'role:staff,admin'])
             ->middleware('can:vehicle.delete')
             ->name('vehicles.destroy');
 
-                // C6 - Giá thuê và khuyến mãi (chỉ admin)
+        // C6 - Giá thuê và khuyến mãi (chỉ admin)
         Route::middleware('can:pricing.manage')->group(function () {
             Route::get('/pricing', [Admin\PricingController::class, 'index'])->name('pricing');
             Route::put('/pricing/by-type', [Admin\PricingController::class, 'updateByType'])->name('pricing.by-type');
@@ -73,6 +89,8 @@ Route::middleware(['auth', 'role:staff,admin'])
         if (app()->isLocal()) {
             Route::view('/ui', 'admin.ui.ui')->middleware('can:user.manage')->name('ui');
         }
+
+        // Các chức năng quản lý sau này (C4 khách hàng, C5 đơn thuê, C7 nhân viên, C8 báo cáo) thêm vào đây
     });
 
 require __DIR__.'/auth.php';

@@ -50,6 +50,11 @@ class Vehicle extends Model
     {
         return $this->hasOne(GpsLocation::class)->latestOfMany('device_time');
     }
+
+    public function rentalOrders(): HasMany
+    {
+        return $this->hasMany(RentalOrder::class);
+    }
         /** Danh sách loại xe dùng cho form và kiểm tra dữ liệu */
     public const TYPES = ['Xe số', 'Tay ga', 'Côn tay', 'Xe điện'];
 
