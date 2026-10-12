@@ -14,6 +14,10 @@ class RentalOrder extends Model
         'user_id', 'vehicle_id', 'promotion_id', 'start_time', 'end_time', 'status',
         'subtotal_amount', 'discount_amount', 'total_amount', 'deposit_amount',
         'expires_at', 'note',
+        // C5
+        'approved_at', 'approved_by', 'picked_up_at', 'picked_up_by',
+        'returned_by', 'cancelled_by', 'original_end_time', 'surcharge_note',
+        'actual_return_time', 'surcharge_amount', 'cancelled_at', 'cancel_reason',
     ];
 
     protected function casts(): array
@@ -24,6 +28,9 @@ class RentalOrder extends Model
             'actual_return_time' => 'datetime',
             'expires_at' => 'datetime',
             'cancelled_at' => 'datetime',
+            'approved_at' => 'datetime',
+            'picked_up_at' => 'datetime',
+            'original_end_time' => 'datetime',
             'status' => OrderStatus::class,
             'subtotal_amount' => 'integer',
             'discount_amount' => 'integer',
@@ -47,6 +54,26 @@ class RentalOrder extends Model
     public function promotion(): BelongsTo
     {
         return $this->belongsTo(Promotion::class);
+    }
+
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function pickedUpBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'picked_up_by');
+    }
+
+    public function returnedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'returned_by');
+    }
+
+    public function cancelledBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
 
     /**
