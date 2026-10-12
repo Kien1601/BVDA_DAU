@@ -3,7 +3,7 @@
 @section('title', 'Thuê xe máy, theo dõi bằng GPS')
 
 @section('content')
-    {{-- ============================================ màn hình mở đầu (vùng luôn tối) --}}
+    {{-- ============================================ màn hình mở đầu (cảnh ngày/đêm theo chế độ chung) --}}
     <section id="hero" class="relative h-[100svh] min-h-[640px] overflow-hidden">
         <div id="city-scene" class="scene-host absolute inset-0" data-quality="high" aria-hidden="true"></div>
         <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-page/70 via-page/10 to-page"></div>
