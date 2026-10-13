@@ -66,6 +66,21 @@ Route::middleware(['auth', 'role:staff,admin'])
             Route::resource('stores', Admin\StoreController::class)->except(['show']);
         });
 
+        // C5: Quản lý đơn thuê
+        Route::middleware('can:order.manage')
+            ->prefix('orders')
+            ->name('orders.')
+            ->controller(Admin\OrderController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/{order}', 'show')->name('show');
+                Route::post('/{order}/approve', 'approve')->name('approve');
+                Route::post('/{order}/pick-up', 'pickUp')->name('pick-up');
+                Route::post('/{order}/extend', 'extend')->name('extend');
+                Route::post('/{order}/complete', 'complete')->name('complete');
+                Route::post('/{order}/cancel', 'cancel')->name('cancel');
+            });
+
         // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete
         Route::middleware('can:vehicle.manage')->group(function () {
             Route::resource('vehicles', Admin\VehicleController::class)->except(['show', 'destroy']);

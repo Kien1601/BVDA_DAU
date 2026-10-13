@@ -160,3 +160,38 @@ Bản đồ giám sát GPS của nhân viên giữ nền đường phố, không
 3. Vùng cần cố định một chế độ: thêm `data-theme` lên thẻ ngoài cùng của vùng, ghi vào bảng "Vùng luôn tối".
 4. Phần tự vẽ màu bằng JavaScript: đọc `document.documentElement.dataset.theme` lúc tạo và nghe `theme:change`.
 5. Soát ở trang mẫu `/admin/ui` (chỉ máy dev): hai cột sáng/tối đặt cạnh nhau.
+
+## Cập nhật sau nhật ký buổi 4: B2 đặt thuê (đã gộp main, tag v0.6-dat-thue)
+
+Dữ liệu:
+- Bảng rental_orders: như ERD + thêm subtotal_amount, discount_amount, expires_at (giữ chỗ),
+  cancelled_at, cancel_reason. promotion_id restrictOnDelete.
+- Enum App\Enums\OrderStatus: pending/approved/active/completed/cancelled, label(), tone(),
+  blocking() = [pending, approved, active], cancellableByCustomer().
+- Model RentalOrder: scopeBlocking() (đơn pending quá expires_at coi như đã nhả xe ngay),
+  scopeOverlapping() (khoảng nối tiếp không tính trùng); vehicle() dùng withTrashed().
+- Quan hệ rentalOrders() ở Vehicle, User, Promotion. Vehicle::canBeDeleted() đã chặn xe còn đơn.
+  PromotionController::destroy() đã chặn xóa mã đã dùng.
+
+Nghiệp vụ (app/Services/BookingService.php):
+- rentFor(): giờ (lẻ phút tròn lên) → ngày → tuần; giờ lẻ ≤ giá 1 ngày, ngày lẻ ≤ giá 1 tuần.
+- depositFor(): 30% tổng sau giảm, tròn lên 10.000, tối thiểu 100.000.
+- quote($vehicle, $start, $end, $code, $ignoreOrderId) — $ignoreOrderId dành cho gia hạn (C5.3).
+- create() khóa dòng xe (lockForUpdate) chống đặt trùng đồng thời.
+- cancelByCustomer(), expirePending(); lỗi nghiệp vụ ném ValidationException theo tên trường.
+- config/rental.php: hold_minutes 30, min_lead_minutes 30, max_days 30, deposit_*.
+- APP_TIMEZONE=Asia/Ho_Chi_Minh.
+- Lệnh rental:expire-pending, lên lịch mỗi phút (routes/console.php); local chưa có scheduler.
+
+Giao diện, quyền:
+- Route khách đăng nhập (ngoài nhóm /admin): booking.create, booking.store, booking.quote (JSON),
+  booking.show, booking.cancel. RentalOrderPolicy: view (chủ đơn hoặc order.manage), cancel.
+- View customer/booking/: bookingCreate (báo giá trực tiếp), bookingConfirm (trang đơn, đếm ngược).
+- JS dùng chung: resources/js/shared/utils/debounce.js, formatCurrency.js.
+- Dashboard đã dùng số liệu thật (đơn chờ duyệt, đang thuê, xe sẵn sàng, đơn mới); doanh thu chờ B3/C8.
+- Test mới: BookingServiceTest (14), BookingFlowTest (10).
+
+Việc còn treo:
+- B3: khi khách thanh toán hoặc chọn trả tại cửa hàng → đặt expires_at = null; hoàn tiền khi hủy đơn đã trả.
+- C5: chưa làm; popup GPS cột renter đang null.
+- Dữ liệu Đà Nẵng (cửa hàng, biển số, tọa độ mặc định, tuyến giả lập): để khi tích hợp GPS thật.
