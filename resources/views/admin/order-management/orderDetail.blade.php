@@ -28,6 +28,7 @@
     <div class="grid gap-6 lg:grid-cols-3">
         <div class="space-y-6 lg:col-span-2">
             @include('admin.order-management.partials.order-info')
+            @include('admin.order-management.partials.payment-panel')
         </div>
         <div class="space-y-6">
             @include('admin.order-management.partials.action-buttons')

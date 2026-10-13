@@ -10,7 +10,14 @@ Route::get('/', [Customer\HomeController::class, 'index'])->name('home');
 Route::get('/vehicles', [Customer\VehicleController::class, 'index'])->name('vehicles.index');
 Route::get('/vehicles/{vehicle}', [Customer\VehicleController::class, 'show'])->name('vehicles.show');
 Route::get('/stores', [Customer\StoreController::class, 'index'])->name('stores.index');
-
+Route::get('/payment/vnpay/return', [\App\Http\Controllers\PaymentController::class, 'vnpayReturn'])
+    ->name('payment.vnpay.return');
+Route::get('/payment/vnpay/ipn', [\App\Http\Controllers\PaymentController::class, 'vnpayIpn'])
+    ->name('payment.vnpay.ipn');
+Route::get('/payment/momo/return', [\App\Http\Controllers\PaymentController::class, 'momoReturn'])
+    ->name('payment.momo.return');
+Route::post('/payment/momo/ipn', [\App\Http\Controllers\PaymentController::class, 'momoIpn'])
+    ->name('payment.momo.ipn');
 // ================= ĐẶT THUÊ (khách hàng đã đăng nhập) =================
 // B2 - chỉ tài khoản khách hàng (quyền booking.create)
 Route::middleware('auth')->group(function () {
@@ -20,6 +27,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/vehicles/{vehicle}/quote', [Customer\BookingController::class, 'quote'])
             ->middleware('throttle:60,1')
             ->name('booking.quote');
+        Route::post('/payment/{order}/vnpay', [\App\Http\Controllers\PaymentController::class, 'vnpayCreate'])
+            ->name('payment.vnpay.create');
+        Route::post('/payment/{order}/momo', [\App\Http\Controllers\PaymentController::class, 'momoCreate'])
+            ->name('payment.momo.create');
+        Route::post('/payment/{order}/cash', [\App\Http\Controllers\PaymentController::class, 'chooseCash'])
+            ->name('payment.cash');
     });
 
     // Xem và hủy đơn: kiểm tra bằng RentalOrderPolicy (chủ đơn)
@@ -79,6 +92,8 @@ Route::middleware(['auth', 'role:staff,admin'])
                 Route::post('/{order}/extend', 'extend')->name('extend');
                 Route::post('/{order}/complete', 'complete')->name('complete');
                 Route::post('/{order}/cancel', 'cancel')->name('cancel');
+                Route::post('/{order}/cash', 'collectCash')->name('collect-cash');
+                Route::post('/{order}/refunds/{payment}', 'confirmRefund')->name('confirm-refund');
             });
 
         // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete

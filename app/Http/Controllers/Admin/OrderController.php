@@ -9,6 +9,9 @@ use App\Services\OrderManagementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
+use App\Enums\PaymentType;
+use App\Models\Payment;
+use App\Services\PaymentService;
 
 class OrderController extends Controller
 {
@@ -28,15 +31,16 @@ class OrderController extends Controller
         ]);
     }
 
-    public function show(RentalOrder $order)
+        public function show(RentalOrder $order, PaymentService $payments)
     {
-        $order->load(['user', 'vehicle', 'promotion', 'approvedBy', 'pickedUpBy', 'returnedBy', 'cancelledBy']);
+        $order->load(['user', 'vehicle', 'promotion', 'approvedBy', 'pickedUpBy', 'returnedBy', 'cancelledBy', 'payments.createdBy']);
 
         return view('admin.order-management.orderDetail', [
             'order' => $order,
             'lateFeeNow' => $order->status === OrderStatus::Active
                 ? $this->orders->lateFee($order, now())
                 : 0,
+            'amountDue' => $payments->amountDue($order),
         ]);
     }
 
@@ -100,5 +104,30 @@ class OrderController extends Controller
         $this->orders->cancelByStaff($order, $request->user(), $data['cancel_reason']);
 
         return back()->with('success', "Đã hủy đơn #{$order->id}.");
+    }
+
+        /** Nhân viên thu tiền mặt: cọc hoặc phần còn lại. Số tiền hệ thống tự tính */
+    public function collectCash(Request $request, RentalOrder $order, PaymentService $payments)
+    {
+        $data = $request->validate(['type' => ['required', Rule::in(['deposit', 'balance'])]]);
+        $type = PaymentType::from($data['type']);
+
+        $amount = $type === PaymentType::Deposit
+            ? $order->deposit_amount
+            : $payments->amountDue($order);
+
+        $payments->collectCash($order, $type, $amount, $request->user(), 'Thu tiền mặt tại cửa hàng');
+
+        return back()->with('success', 'Đã thu '.number_format($amount, 0, ',', '.').' đ tiền mặt.');
+    }
+
+    /** Nhân viên xác nhận đã hoàn tiền cho khách */
+    public function confirmRefund(Request $request, RentalOrder $order, Payment $payment, PaymentService $payments)
+    {
+        abort_unless($payment->rental_order_id === $order->id, 404);
+
+        $payments->confirmRefund($payment, $request->user());
+
+        return back()->with('success', 'Đã xác nhận hoàn tiền.');
     }
 }
