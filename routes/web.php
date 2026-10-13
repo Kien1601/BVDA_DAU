@@ -10,7 +10,10 @@ Route::get('/', [Customer\HomeController::class, 'index'])->name('home');
 Route::get('/vehicles', [Customer\VehicleController::class, 'index'])->name('vehicles.index');
 Route::get('/vehicles/{vehicle}', [Customer\VehicleController::class, 'show'])->name('vehicles.show');
 Route::get('/stores', [Customer\StoreController::class, 'index'])->name('stores.index');
-
+Route::get('/payment/vnpay/return', [\App\Http\Controllers\PaymentController::class, 'vnpayReturn'])
+    ->name('payment.vnpay.return');
+Route::get('/payment/vnpay/ipn', [\App\Http\Controllers\PaymentController::class, 'vnpayIpn'])
+    ->name('payment.vnpay.ipn');
 // ================= ĐẶT THUÊ (khách hàng đã đăng nhập) =================
 // B2 - chỉ tài khoản khách hàng (quyền booking.create)
 Route::middleware('auth')->group(function () {
@@ -20,6 +23,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/vehicles/{vehicle}/quote', [Customer\BookingController::class, 'quote'])
             ->middleware('throttle:60,1')
             ->name('booking.quote');
+        Route::post('/payment/{order}/vnpay', [\App\Http\Controllers\PaymentController::class, 'vnpayCreate'])
+            ->name('payment.vnpay.create');
     });
 
     // Xem và hủy đơn: kiểm tra bằng RentalOrderPolicy (chủ đơn)

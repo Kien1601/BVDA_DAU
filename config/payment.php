@@ -12,6 +12,7 @@ return [
     ],
 
     'momo' => [
+        'request_type' => env('MOMO_REQUEST_TYPE', 'payWithATM'), // captureWallet = quét QR bằng app MoMo
         'partner_code' => env('MOMO_PARTNER_CODE'),
         'access_key' => env('MOMO_ACCESS_KEY'),
         'secret_key' => env('MOMO_SECRET_KEY'),

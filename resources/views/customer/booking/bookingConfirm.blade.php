@@ -30,7 +30,7 @@
             @endif
         </div>
 
-        @if ($showHold)
+        @if ($showHold && $order->expires_at)
             <div class="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-ember/40 bg-ember/10 p-5">
                 <div>
                     <div class="text-[10px] font-medium uppercase tracking-label text-fg-muted">Xe đang được giữ cho bạn</div>
