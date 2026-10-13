@@ -181,7 +181,8 @@ class BookingService
         }
     }
 
-    private function assertAvailable(Vehicle $vehicle, CarbonInterface $start, CarbonInterface $end, ?int $ignoreOrderId): void
+    /** Dùng lại khi gia hạn đơn (C5.3) */
+    public function assertAvailable(Vehicle $vehicle, CarbonInterface $start, CarbonInterface $end, ?int $ignoreOrderId): void
     {
         $taken = RentalOrder::query()
             ->where('vehicle_id', $vehicle->id)
