@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
             ->name('payment.vnpay.create');
         Route::post('/payment/{order}/momo', [\App\Http\Controllers\PaymentController::class, 'momoCreate'])
             ->name('payment.momo.create');
+        Route::post('/payment/{order}/cash', [\App\Http\Controllers\PaymentController::class, 'chooseCash'])
+            ->name('payment.cash');
     });
 
     // Xem và hủy đơn: kiểm tra bằng RentalOrderPolicy (chủ đơn)

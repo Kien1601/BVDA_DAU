@@ -80,4 +80,14 @@ class PaymentController extends Controller
 
         return response()->noContent();
     }
+
+        /** Khách chọn trả cọc tiền mặt khi nhận xe */
+    public function chooseCash(Request $request, RentalOrder $order, PaymentService $payments)
+    {
+        abort_unless($order->user_id === $request->user()->id, 403);
+
+        $payments->chooseCashAtStore($order);
+
+        return back()->with('success', 'Đã ghi nhận: bạn sẽ trả tiền cọc tại cửa hàng khi nhận xe.');
+    }
 }

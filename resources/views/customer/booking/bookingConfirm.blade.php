@@ -30,11 +30,11 @@
             @endif
         </div>
 
-        @if ($showHold && $order->expires_at)
+                @if ($showHold && $order->expires_at)
             <div class="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-ember/40 bg-ember/10 p-5">
                 <div>
                     <div class="text-[10px] font-medium uppercase tracking-label text-fg-muted">Xe đang được giữ cho bạn</div>
-                    <p class="mt-1 text-sm text-fg-soft">Thanh toán trước khi hết giờ để giữ đơn. Chức năng thanh toán có ở bước tiếp theo.</p>
+                    <p class="mt-1 text-sm text-fg-soft">Trả cọc ở khung bên dưới trước khi hết giờ để giữ đơn.</p>
                 </div>
                 <div class="text-4xl font-light tabular-nums text-ember" data-countdown="{{ $order->expires_at->toIso8601String() }}">--:--</div>
             </div>
@@ -43,6 +43,10 @@
                 Đơn đã quá thời gian giữ chỗ nên xe không còn được giữ. Bạn có thể đặt lại.
             </p>
         @endif
+
+        <div class="mt-6">
+            @include('customer.booking.partials.payment-box')
+        </div>
 
         <div class="mt-8 grid gap-6 md:grid-cols-2">
             <div class="rounded-xl border border-edge bg-card p-6">
