@@ -7,6 +7,9 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\PaymentStatus;
+use App\Enums\PaymentType;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RentalOrder extends Model
 {
@@ -74,6 +77,31 @@ class RentalOrder extends Model
     public function cancelledBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'cancelled_by');
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /** Đã trả cọc thành công chưa */
+    public function depositPaid(): bool
+    {
+        return $this->payments()
+            ->where('type', PaymentType::Deposit->value)
+            ->where('status', PaymentStatus::Paid->value)
+            ->exists();
+    }
+
+    /** Tổng tiền khách đã trả, trừ đi tiền đã hoàn */
+    public function paidAmount(): int
+    {
+        $paid = $this->payments()->where('status', PaymentStatus::Paid->value);
+
+        $in = (clone $paid)->where('type', '!=', PaymentType::Refund->value)->sum('amount');
+        $out = (clone $paid)->where('type', PaymentType::Refund->value)->sum('amount');
+
+        return (int) $in - (int) $out;
     }
 
     /**

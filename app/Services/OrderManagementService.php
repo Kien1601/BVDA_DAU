@@ -14,9 +14,11 @@ use Illuminate\Validation\ValidationException;
 
 class OrderManagementService
 {
-    public function __construct(private BookingService $booking)
-    {
-    }
+    public function __construct(
+    private BookingService $booking,
+    private PaymentService $payments,
+) {
+}
 
     /** Danh sách đơn cho nhân viên: lọc trạng thái, tìm theo mã đơn / tên, SĐT khách / biển số. */
     public function search(?string $status, ?string $keyword): LengthAwarePaginator
@@ -191,7 +193,7 @@ class OrderManagementService
                 'cancel_reason' => $reason,
                 'cancelled_by' => $staff->id,
             ]);
-
+            $this->payments->handleCancelled($order, $staff, $reason);
             return $order;
         });
     }

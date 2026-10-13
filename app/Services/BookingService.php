@@ -129,7 +129,7 @@ class BookingService
             'cancel_reason' => $reason ?: 'Khách hủy',
         ])->save();
 
-        // TODO (B3): nếu đã thanh toán online thì tạo bản ghi hoàn tiền (payments.type = refund)
+        app(PaymentService::class)->handleCancelled($order, null, $reason ?: 'Khách hủy đơn');
 
         return $order;
     }
@@ -141,6 +141,12 @@ class BookingService
      */
     public function expirePending(): int
     {
+    // B3: đơn đã tự hủy thì các khoản thanh toán đang chờ cũng hủy theo
+    \App\Models\Payment::where('status', \App\Enums\PaymentStatus::Pending->value)
+        ->where('type', '!=', \App\Enums\PaymentType::Refund->value)
+        ->whereHas('order', fn ($q) => $q->where('status', \App\Enums\OrderStatus::Cancelled->value))
+        ->update(['status' => \App\Enums\PaymentStatus::Cancelled->value]);
+        
         return RentalOrder::query()
             ->where('status', OrderStatus::Pending->value)
             ->whereNotNull('expires_at')
