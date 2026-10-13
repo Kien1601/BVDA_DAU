@@ -14,6 +14,10 @@ Route::get('/payment/vnpay/return', [\App\Http\Controllers\PaymentController::cl
     ->name('payment.vnpay.return');
 Route::get('/payment/vnpay/ipn', [\App\Http\Controllers\PaymentController::class, 'vnpayIpn'])
     ->name('payment.vnpay.ipn');
+Route::get('/payment/momo/return', [\App\Http\Controllers\PaymentController::class, 'momoReturn'])
+    ->name('payment.momo.return');
+Route::post('/payment/momo/ipn', [\App\Http\Controllers\PaymentController::class, 'momoIpn'])
+    ->name('payment.momo.ipn');
 // ================= ĐẶT THUÊ (khách hàng đã đăng nhập) =================
 // B2 - chỉ tài khoản khách hàng (quyền booking.create)
 Route::middleware('auth')->group(function () {
@@ -25,6 +29,8 @@ Route::middleware('auth')->group(function () {
             ->name('booking.quote');
         Route::post('/payment/{order}/vnpay', [\App\Http\Controllers\PaymentController::class, 'vnpayCreate'])
             ->name('payment.vnpay.create');
+        Route::post('/payment/{order}/momo', [\App\Http\Controllers\PaymentController::class, 'momoCreate'])
+            ->name('payment.momo.create');
     });
 
     // Xem và hủy đơn: kiểm tra bằng RentalOrderPolicy (chủ đơn)

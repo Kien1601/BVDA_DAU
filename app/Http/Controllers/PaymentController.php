@@ -9,6 +9,7 @@ use App\Models\RentalOrder;
 use App\Services\PaymentService;
 use App\Services\Payments\VnpayGateway;
 use Illuminate\Http\Request;
+use App\Services\Payments\MomoGateway;
 
 class PaymentController extends Controller
 {
@@ -52,5 +53,31 @@ class PaymentController extends Controller
                 $paid ? 'success' : 'error',
                 $paid ? 'Thanh toán cọc thành công.' : 'Thanh toán chưa thành công, bạn có thể thử lại.'
             );
+    }
+
+        /** Khách bấm "Thanh toán cọc qua MoMo" */
+    public function momoCreate(Request $request, RentalOrder $order, PaymentService $payments, MomoGateway $momo)
+    {
+        abort_unless($order->user_id === $request->user()->id, 403);
+
+        $payment = $payments->startOnlineDeposit($order, PaymentMethod::Momo);
+
+        return redirect()->away($momo->createPaymentUrl($payment));
+    }
+
+    /** MoMo đưa khách quay về đây */
+    public function momoReturn(Request $request, MomoGateway $momo)
+    {
+        [, $payment] = $momo->handleCallback($request->query());
+
+        return $this->backToOrder($payment);
+    }
+
+    /** MoMo gọi ngầm (POST JSON), chỉ hoạt động khi web có địa chỉ công khai */
+    public function momoIpn(Request $request, MomoGateway $momo)
+    {
+        $momo->handleCallback($request->all());
+
+        return response()->noContent();
     }
 }

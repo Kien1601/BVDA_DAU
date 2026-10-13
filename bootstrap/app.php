@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+        $middleware->validateCsrfTokens(except: ['payment/momo/ipn']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
     // Traccar không gửi header Accept: application/json.
