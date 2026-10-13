@@ -92,6 +92,8 @@ Route::middleware(['auth', 'role:staff,admin'])
                 Route::post('/{order}/extend', 'extend')->name('extend');
                 Route::post('/{order}/complete', 'complete')->name('complete');
                 Route::post('/{order}/cancel', 'cancel')->name('cancel');
+                Route::post('/{order}/cash', 'collectCash')->name('collect-cash');
+                Route::post('/{order}/refunds/{payment}', 'confirmRefund')->name('confirm-refund');
             });
 
         // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete

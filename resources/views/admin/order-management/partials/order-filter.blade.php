@@ -1,13 +1,19 @@
-{{-- Tab lọc theo trạng thái --}}
-<nav class="mb-4 flex flex-wrap gap-x-6 gap-y-2 border-b border-edge text-sm">
+@php
+    $tab = 'inline-flex items-center gap-2 rounded-full border px-4 py-2 transition-colors';
+    $tabOn = 'border-vermilion bg-card text-fg';
+    $tabOff = 'border-edge-strong bg-card text-fg-soft hover:border-vermilion hover:text-fg';
+    $badge = 'rounded-full bg-card-2 px-2 py-0.5 text-xs tabular-nums text-fg-soft';
+@endphp
+
+<nav class="mb-4 flex flex-wrap gap-2 text-sm">
     <a href="{{ route('admin.orders.index', array_filter(['q' => $q])) }}"
-       class="-mb-px border-b-2 pb-2 {{ $status === null ? 'border-vermilion text-fg' : 'border-transparent text-fg-soft hover:text-fg' }}">
-        Tất cả <span class="tabular-nums text-fg-muted">{{ array_sum($counts) }}</span>
+       class="{{ $tab }} {{ $status === null ? $tabOn : $tabOff }}">
+        Tất cả <span class="{{ $badge }}">{{ array_sum($counts) }}</span>
     </a>
     @foreach (\App\Enums\OrderStatus::cases() as $case)
         <a href="{{ route('admin.orders.index', array_filter(['status' => $case->value, 'q' => $q])) }}"
-           class="-mb-px border-b-2 pb-2 {{ $status === $case->value ? 'border-vermilion text-fg' : 'border-transparent text-fg-soft hover:text-fg' }}">
-            {{ $case->label() }} <span class="tabular-nums text-fg-muted">{{ $counts[$case->value] ?? 0 }}</span>
+           class="{{ $tab }} {{ $status === $case->value ? $tabOn : $tabOff }}">
+            {{ $case->label() }} <span class="{{ $badge }}">{{ $counts[$case->value] ?? 0 }}</span>
         </a>
     @endforeach
 </nav>

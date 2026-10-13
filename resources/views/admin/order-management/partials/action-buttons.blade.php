@@ -17,6 +17,9 @@
                 <section class="border border-edge bg-card p-5">
                     <h2 class="mb-2 text-base text-fg">Giao xe</h2>
                     <p class="mb-4 text-sm text-fg-soft">Kiểm tra CCCD của khách và nhận cọc trước khi giao.</p>
+                    @unless ($order->depositPaid())
+                        <p class="mb-4 text-sm text-vermilion">Khách chưa trả cọc. Thu cọc ở khung Thanh toán trước khi giao xe.</p>
+                    @endunless
                     <form method="POST" action="{{ route('admin.orders.pick-up', $order) }}"
                           onsubmit="return confirm('Xác nhận đã giao xe cho khách?')">
                         @csrf
