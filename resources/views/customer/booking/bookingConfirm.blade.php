@@ -9,6 +9,9 @@
     @endphp
 
     <section class="mx-auto max-w-4xl px-5 pb-24 pt-28 lg:px-8">
+        @can('order.view_own')
+            <a href="{{ route('account.orders') }}" class="mb-6 inline-block text-sm text-fg-soft transition-colors hover:text-fg">← Đơn của tôi</a>
+        @endcan
         @if (session('success'))
             <div class="mb-6 flex items-start gap-3 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-fg" role="status">
                 <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500"></span>{{ session('success') }}
@@ -44,8 +47,9 @@
             </p>
         @endif
 
-        <div class="mt-6">
-            @include('customer.booking.partials.payment-box')
+        <div class="mt-6 grid gap-6 md:grid-cols-2">
+            @include('customer.booking.partials.order-timeline')
+            @include('customer.booking.partials.payment-history')
         </div>
 
         <div class="mt-8 grid gap-6 md:grid-cols-2">
