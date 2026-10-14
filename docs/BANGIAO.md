@@ -242,3 +242,8 @@ Phải build giao diện trước khi chạy test có render trang.
 | File Blade lỗi lạ đầu trang | Ghi file có BOM: dùng UTF-8 không BOM |
 | Chữ trùng nền | Dùng sai token màu: kiểm tra ở /admin/ui |
 
+B3 Thanh toán sang “Đã xong”, ghi tag v0.8-thanh-toan.
+Thêm bảng payments (các cột như migration B3.1) và 3 enum PaymentType, PaymentMethod, PaymentStatus.
+Thêm PaymentService, VnpayGateway, MomoGateway, 2 file test mới.
+Thêm biến .env: VNPAY_*, MOMO_*, MOMO_REQUEST_TYPE.
+Mục “Việc còn treo”: IPN của VNPay/MoMo chỉ chạy khi có server công khai (Giai đoạn 5); MoMo sandbox mới thử bằng callback giả lập; app đang chạy UTC dù tài liệu ghi Asia/Ho_Chi_Minh (cần kiểm tra bằng art about).

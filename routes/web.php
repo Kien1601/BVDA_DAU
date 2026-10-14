@@ -38,6 +38,12 @@ Route::middleware('auth')->group(function () {
     // Xem và hủy đơn: kiểm tra bằng RentalOrderPolicy (chủ đơn)
     Route::get('/booking/{order}', [Customer\BookingController::class, 'show'])->name('booking.show');
     Route::post('/booking/{order}/cancel', [Customer\BookingController::class, 'cancel'])->name('booking.cancel');
+        // B4 - Tài khoản khách: lịch sử đơn, hóa đơn
+    Route::get('/account/orders', [Customer\AccountController::class, 'orders'])
+        ->middleware('can:order.view_own')
+        ->name('account.orders');
+    Route::get('/account/orders/{order}/invoice', [Customer\AccountController::class, 'invoice'])
+        ->name('account.invoice');
 });
 
 // Route mặc định của Breeze, giữ tạm vì menu Breeze đang dùng
