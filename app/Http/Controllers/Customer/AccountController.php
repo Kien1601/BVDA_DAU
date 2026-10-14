@@ -33,7 +33,7 @@ class AccountController extends Controller
         Gate::authorize('view', $order);
         abort_unless($order->status === OrderStatus::Completed, 404);
 
-        $order->load(['user', 'vehicle:id,name,license_plate,type']);
+            $order->load(['user', 'vehicle:id,name,license_plate,type', 'promotion:id,code']);
 
         return view('customer.account.invoice', ['order' => $order] + $this->orders->invoice($order));
     }

@@ -53,6 +53,17 @@ class PaymentGatewayTest extends TestCase
         ]);
     }
 
+    public function test_trang_don_hien_cac_nut_thanh_toan_coc(): void
+    {
+        $don = $this->taoDon();
+
+        $this->actingAs($don->user)->get(route('booking.show', $don))
+            ->assertOk()
+            ->assertSee(route('payment.vnpay.create', $don))
+            ->assertSee(route('payment.momo.create', $don))
+            ->assertSee(route('payment.cash', $don));
+    }
+
     private function taoKhoanCho(PaymentMethod $method): Payment
     {
         return app(PaymentService::class)->startOnlineDeposit($this->taoDon(), $method);

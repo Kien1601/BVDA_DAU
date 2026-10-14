@@ -47,6 +47,10 @@
             </p>
         @endif
 
+        <div class="mt-6">
+            @include('customer.booking.partials.payment-box')
+        </div>
+
         <div class="mt-6 grid gap-6 md:grid-cols-2">
             @include('customer.booking.partials.order-timeline')
             @include('customer.booking.partials.payment-history')
