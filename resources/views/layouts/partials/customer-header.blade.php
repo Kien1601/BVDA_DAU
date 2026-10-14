@@ -4,6 +4,11 @@
         ['route' => 'vehicles.index', 'match' => 'vehicles.*', 'label' => 'Xe cho thuê'],
         ['route' => 'stores.index',   'match' => 'stores.*',   'label' => 'Cửa hàng'],
     ];
+
+    // B4: chỉ khách đã đăng nhập mới thấy
+    if (auth()->user()?->can('order.view_own')) {
+        $links[] = ['route' => 'account.orders', 'match' => 'account.*', 'label' => 'Đơn của tôi'];
+    }
 @endphp
 
 {{-- Header theo chế độ chung: màn hình mở đầu trang chủ cũng đổi theo chế độ (cảnh ngày/đêm),
