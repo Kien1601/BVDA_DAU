@@ -11,7 +11,7 @@
         ['route' => 'admin.pricing',          'match' => 'admin.pricing*',      'label' => 'Giá thuê',     'can' => 'pricing.manage'],
         ['route' => 'admin.promotions.index', 'match' => 'admin.promotions.*',  'label' => 'Khuyến mãi',   'can' => 'pricing.manage'],
         ['route' => 'admin.staff.index',      'match' => 'admin.staff.*',       'label' => 'Nhân viên',    'can' => 'user.manage'],
-        ['route' => 'admin.reports',          'match' => 'admin.reports*',      'label' => 'Báo cáo',      'can' => 'report.view'],
+        ['route' => 'admin.reports.index',    'match' => 'admin.reports.*',     'label' => 'Báo cáo',      'can' => 'report.view'],
     ];
     $n = 0;
 @endphp
