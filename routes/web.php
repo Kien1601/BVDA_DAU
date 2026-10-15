@@ -108,6 +108,7 @@ Route::middleware(['auth', 'role:staff,admin'])
             ->controller(Admin\ReportController::class)
             ->group(function () {
                 Route::get('/', 'index')->name('index');
+                Route::get('/export', 'export')->name('export');
             });
         // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete
         Route::middleware('can:vehicle.manage')->group(function () {

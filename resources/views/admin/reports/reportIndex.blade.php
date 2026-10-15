@@ -44,6 +44,10 @@
                 <x-text-input type="date" name="to" :value="$to->toDateString()" class="{{ $field }}" />
             </div>
             <button type="submit" class="{{ $btn }}">Xem</button>
+                <a href="{{ route('admin.reports.export', ['from' => $from->toDateString(), 'to' => $to->toDateString()]) }}"
+                    class="rounded-full border border-edge-strong px-5 py-2 text-sm text-fg transition-colors hover:border-vermilion hover:text-vermilion">
+                Xuất CSV
+             </a>
         </form>
         <div class="mt-4 flex flex-wrap gap-2">
             @foreach ($quick as $name => [$qFrom, $qTo])
