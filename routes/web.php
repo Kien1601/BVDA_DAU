@@ -101,7 +101,15 @@ Route::middleware(['auth', 'role:staff,admin'])
                 Route::post('/{order}/cash', 'collectCash')->name('collect-cash');
                 Route::post('/{order}/refunds/{payment}', 'confirmRefund')->name('confirm-refund');
             });
-
+                // C8 - Báo cáo (chỉ admin)
+        Route::middleware('can:report.view')
+            ->prefix('reports')
+            ->name('reports.')
+            ->controller(Admin\ReportController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/export', 'export')->name('export');
+            });
         // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete
         Route::middleware('can:vehicle.manage')->group(function () {
             Route::resource('vehicles', Admin\VehicleController::class)->except(['show', 'destroy']);

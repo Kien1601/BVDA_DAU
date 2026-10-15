@@ -10,7 +10,7 @@
 
 @can('report.view')
     <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <x-stat-card label="Doanh thu hôm nay" :value="number_format($revenue['today']) . ' đ'" />
-        <x-stat-card label="Doanh thu tháng này" :value="number_format($revenue['month']) . ' đ'" />
+                <x-stat-card label="Doanh thu hôm nay" :value="number_format($revenue['today'], 0, ',', '.') . ' đ'" />
+        <x-stat-card label="Doanh thu tháng này" :value="number_format($revenue['month'], 0, ',', '.') . ' đ'" />
     </div>
 @endcan
