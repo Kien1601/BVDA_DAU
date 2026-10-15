@@ -248,8 +248,14 @@ Thêm PaymentService, VnpayGateway, MomoGateway, 2 file test mới.
 Thêm biến .env: VNPAY_*, MOMO_*, MOMO_REQUEST_TYPE.
 Mục “Việc còn treo”: IPN của VNPay/MoMo chỉ chạy khi có server công khai (Giai đoạn 5); MoMo sandbox mới thử bằng callback giả lập; app đang chạy UTC dù tài liệu ghi Asia/Ho_Chi_Minh (cần kiểm tra bằng art about).
 
+# Hoàn thành B4
 Mục 6: chuyển B4 từ “Chưa làm” sang “Đã xong”, ghi chú: /account/orders lọc theo trạng thái; chi tiết dùng trang đơn booking.show (thêm hành trình, lịch sử thanh toán); hóa đơn /account/orders/{id}/invoice chỉ cho đơn hoàn thành, in được, nhân viên mở được.
 Mục 1: thêm tag v0.9-tai-khoan.
 Mục 3, bảng route: thêm account.orders (quyền order.view_own), account.invoice (Policy view).
 Mục 9: thêm “Vùng luôn sáng: trang hóa đơn customer/account/invoice (data-theme="light", không dùng layout)”.
 Mục 10: thêm dòng Tài khoản khách: CustomerAccountTest (12).
+
+# Mục 1: thêm tag v1.0-bao-cao.
+Mục 6: chuyển C8 sang “Đã xong”, ghi chú: /admin/reports chỉ admin; doanh thu = tiền thực thu từ payments (đã trả trừ hoàn, theo paid_at); lượt thuê theo picked_up_at; kỳ tối đa 92 ngày; xuất CSV. Sửa dòng C1: dashboard đã dùng số thật, doanh thu hôm nay và tháng này chỉ admin thấy.
+Mục 12 “Việc còn treo”: bỏ dòng “Doanh thu dashboard”.
+Mục 10: thêm dòng Báo cáo: ReportTest (9).
