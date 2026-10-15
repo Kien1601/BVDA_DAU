@@ -12,11 +12,11 @@
 
         @forelse ($recentOrders as $order)
             <tr>
-                <td class="tabular-nums">#{{ $order->id }}</td>
+                                <td class="tabular-nums"><a href="{{ route('admin.orders.show', $order) }}" class="hover:text-vermilion">#{{ $order->id }}</a></td>
                 <td>{{ $order->user->name }}</td>
                 <td>{{ $order->vehicle->license_plate }}</td>
                 <td class="tabular-nums">{{ $order->start_time->format('d/m/Y H:i') }}</td>
-                <td><x-status-badge>{{ $order->status->value }}</x-status-badge></td>
+                                <td><x-status-badge :tone="$order->status->tone()">{{ $order->status->label() }}</x-status-badge></td>
             </tr>
         @empty
             <tr>
