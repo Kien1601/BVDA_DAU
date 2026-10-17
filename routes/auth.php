@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\OtpLoginController;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -17,10 +18,16 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+// Khách: đăng nhập bằng mã OTP
+Route::get('login', [OtpLoginController::class, 'create'])->name('login');
+Route::post('login', [OtpLoginController::class, 'store'])->middleware('throttle:10,1')->name('otp.send');
+Route::get('login/code', [OtpLoginController::class, 'edit'])->name('otp.verify');
+Route::post('login/code', [OtpLoginController::class, 'verify'])->middleware('throttle:10,1')->name('otp.check');
+Route::post('login/code/resend', [OtpLoginController::class, 'resend'])->middleware('throttle:5,1')->name('otp.resend');
 
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+// Nhân viên, quản trị: đăng nhập bằng mật khẩu
+Route::get('admin/login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');
+Route::post('admin/login', [AuthenticatedSessionController::class, 'store']);
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');

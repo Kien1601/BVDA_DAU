@@ -19,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
         $middleware->validateCsrfTokens(except: ['payment/momo/ipn']);
+        $middleware->redirectGuestsTo(fn (Request $request) => $request->is('admin', 'admin/*')
+    ? route('admin.login')
+    : route('login'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
     // Traccar không gửi header Accept: application/json.

@@ -137,7 +137,9 @@ class OtpLoginService
         if ($user->role !== 'customer') {
             throw ValidationException::withMessages(['identifier' => 'Tài khoản nhân viên đăng nhập bằng mật khẩu ở trang quản lý.']);
         }
-        if (! $user->is_active) {
+        $role = $user->role instanceof \BackedEnum ? $user->role->value : $user->role;
+
+        if ($role !== 'customer') {
             throw ValidationException::withMessages(['identifier' => 'Tài khoản đã bị khóa. Vui lòng liên hệ cửa hàng.']);
         }
     }
