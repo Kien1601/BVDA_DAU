@@ -22,4 +22,13 @@ return [
     'pickup_early_minutes' => 60,
     // C5: trả trễ trong khoảng này không tính phụ thu
     'late_grace_minutes' => 15,
+
+        // A5: đăng nhập bằng mã OTP
+    'otp' => [
+        'length' => 6,
+        'ttl_minutes' => 5,         // mã hết hạn sau 5 phút
+        'max_attempts' => 5,        // nhập sai 5 lần thì hủy mã
+        'resend_seconds' => 60,     // chờ 60 giây mới gửi lại
+        'max_per_hour' => 5,        // tối đa 5 mã mỗi giờ cho một email/SĐT
+    ],
 ];

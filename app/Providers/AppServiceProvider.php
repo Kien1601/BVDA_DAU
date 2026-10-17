@@ -13,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+                // A5: gửi SMS mã OTP. Hiện ghi log, có dịch vụ SMS thật thì thay lớp ở đây
+        $this->app->bind(\App\Services\Otp\SmsSender::class, \App\Services\Otp\LogSmsSender::class);
     }
 
     /**
