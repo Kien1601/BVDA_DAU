@@ -22,6 +22,10 @@ return [
     'pickup_early_minutes' => 60,
     // C5: trả trễ trong khoảng này không tính phụ thu
     'late_grace_minutes' => 15,
+    // C5: giao xe trễ quá bao nhiêu phút thì tính phụ thu
+    'alert_pickup_before_minutes' => 60,
+    'alert_pickup_late_minutes' => 30,
+    'alert_return_before_minutes' => 60,
 
         // A5: đăng nhập bằng mã OTP
     'otp' => [
@@ -31,4 +35,6 @@ return [
         'resend_seconds' => 60,     // chờ 60 giây mới gửi lại
         'max_per_hour' => 5,        // tối đa 5 mã mỗi giờ cho một email/SĐT
     ],
+
+    
 ];
