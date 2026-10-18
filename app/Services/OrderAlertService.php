@@ -59,6 +59,10 @@ class OrderAlertService
 
         return 1;
     }
+        public function notifyEvent(RentalOrder $order, AlertKind $kind): void
+    {
+        DB::afterCommit(fn () => $this->notifyOnce($order->loadMissing(['user', 'vehicle']), $kind, $order->created_at));
+    }
 
     public function recipients(): Collection
     {

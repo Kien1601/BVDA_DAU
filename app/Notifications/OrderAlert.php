@@ -40,6 +40,9 @@ class OrderAlert extends Notification
             AlertKind::PickupLate => "{$who} chưa đến nhận xe, hẹn lúc ".$o->start_time->format('H:i d/m').'.',
             AlertKind::ReturnSoon => "{$who} trả xe lúc ".$o->end_time->format('H:i d/m').'.',
             AlertKind::Overdue => "{$who} quá hạn trả từ ".$o->end_time->format('H:i d/m').'.',
+            AlertKind::NewBooking => "{$who} đặt xe ".$o->start_time->format('H:i d/m').' đến '.$o->end_time->format('H:i d/m').'.',
+            AlertKind::DepositPaid => "{$who} đã thanh toán cọc, đơn chờ duyệt.",
+            AlertKind::CustomerCancelled => "{$who} tự hủy đơn nhận xe lúc ".$o->start_time->format('H:i d/m').'.',
         };
     }
 }
