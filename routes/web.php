@@ -120,6 +120,14 @@ Route::middleware(['auth', 'role:staff,admin'])
                     ->middleware('can:violation.delete')
                     ->name('violations.destroy');
             });
+
+            // C7: Nhân viên
+        Route::prefix('notifications')->name('notifications.')->controller(\App\Http\Controllers\Admin\NotificationController::class)
+        ->group(function () {
+            Route::get('/feed', 'feed')->name('feed');
+            Route::get('/{id}/open', 'open')->name('open');
+            Route::post('/read-all', 'readAll')->name('read-all');
+        });
                 // C8 - Báo cáo (chỉ admin)
         Route::middleware('can:report.view')
             ->prefix('reports')
