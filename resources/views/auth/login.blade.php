@@ -1,3 +1,4 @@
+//Đăng nhập quản lý
 <x-guest-layout>
     <div class="mb-6">
         <div class="flex items-center gap-2 text-[10px] font-medium uppercase tracking-label text-fg-muted">
@@ -31,8 +32,8 @@
         <x-button class="w-full">Đăng nhập</x-button>
     </form>
 
-    <p class="mt-6 text-center text-sm text-fg-muted">
-        Chưa có tài khoản?
-        <a href="{{ route('register') }}" class="text-fg underline-offset-4 hover:underline">Đăng ký</a>
-    </p>
+            <p class="text-sm text-fg-soft">
+            Bạn là khách thuê xe?
+            <a href="{{ route('login') }}" class="text-fg underline-offset-4 hover:underline">Đăng nhập bằng mã</a>
+        </p>
 </x-guest-layout>
