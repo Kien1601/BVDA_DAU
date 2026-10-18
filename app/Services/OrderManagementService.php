@@ -15,10 +15,11 @@ use Illuminate\Validation\ValidationException;
 class OrderManagementService
 {
     public function __construct(
-    private BookingService $booking,
-    private PaymentService $payments,
-) {
-}
+        private BookingService $booking,
+        private PaymentService $payments,
+        private ViolationService $violations,
+    ) {
+    }
 
     /** Danh sách đơn cho nhân viên: lọc trạng thái, tìm theo mã đơn / tên, SĐT khách / biển số. */
     public function search(?string $status, ?string $keyword): LengthAwarePaginator
@@ -172,7 +173,7 @@ class OrderManagementService
                 'surcharge_amount' => $lateFee + $extraFee,
                 'surcharge_note' => $note,
             ]);
-
+            $this->violations->recordLateReturn($order);
             return $order;
         });
     }
