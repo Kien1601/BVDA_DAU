@@ -1,6 +1,6 @@
 @php($feed = \App\Http\Controllers\Admin\NotificationController::payload(auth()->user()))
 
-<div x-data="notificationBell(@js($feed), @js(route('admin.notifications.feed')))"
+<div x-data="notificationBell(@js($feed), @js(route('admin.notifications.feed')), @js(auth()->id()))"
      @click.outside="open = false" @keydown.escape.window="open = false" class="relative">
     <button type="button" @click="toggle()" aria-label="Thông báo" class="relative rounded p-2 hover:text-vermilion">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
@@ -41,5 +41,20 @@
                 </li>
             </template>
         </ul>
+    </div>
+        <div x-show="toast" x-cloak x-transition
+         class="fixed bottom-4 right-4 z-50 w-80 rounded-lg border border-edge-soft bg-card p-4 text-fg shadow-lg">
+        <button type="button" @click="toast = null; open = true; refresh()" class="flex w-full gap-3 text-left">
+            <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full"
+                  :class="{
+                      'bg-vermilion': toast?.tone === 'danger',
+                      'bg-ember': toast?.tone === 'warning',
+                      'bg-fg-soft': ! ['danger', 'warning'].includes(toast?.tone),
+                  }"></span>
+            <span class="min-w-0">
+                <span class="block text-sm font-semibold" x-text="toast?.title"></span>
+                <span class="block text-sm text-fg-soft" x-text="toast?.message"></span>
+            </span>
+        </button>
     </div>
 </div>
