@@ -259,3 +259,24 @@ Mục 10: thêm dòng Tài khoản khách: CustomerAccountTest (12).
 Mục 6: chuyển C8 sang “Đã xong”, ghi chú: /admin/reports chỉ admin; doanh thu = tiền thực thu từ payments (đã trả trừ hoàn, theo paid_at); lượt thuê theo picked_up_at; kỳ tối đa 92 ngày; xuất CSV. Sửa dòng C1: dashboard đã dùng số thật, doanh thu hôm nay và tháng này chỉ admin thấy.
 Mục 12 “Việc còn treo”: bỏ dòng “Doanh thu dashboard”.
 Mục 10: thêm dòng Báo cáo: ReportTest (9).
+
+
+## v1.1 Đăng nhập bằng mã OTP (A5)
+- Khách: /login nhập email hoặc SĐT, nhận mã 6 số. Email gửi qua Gmail SMTP; SMS đang giả lập (ghi vào storage/logs/laravel.log, khi chạy local hiện "Mã thử" trên trang).
+- Lần đầu đăng nhập tự tạo tài khoản sau khi nhập tên (thêm SĐT nếu vào bằng email). Khách không có mật khẩu.
+- Nhân viên, quản trị: /admin/login bằng email và mật khẩu. Nhập email nhân viên ở /login cũng tự chuyển sang trang này.
+- Giới hạn: mã sống 5 phút, sai 5 lần thì hủy, gửi lại sau 60 giây, tối đa 5 mã mỗi giờ (config/rental.php, mục otp).
+- Đã gỡ: đăng ký, quên mật khẩu. Xóa RegistrationTest và PasswordResetTest vì tính năng không còn.
+- AuthenticationTest: test đăng nhập mật khẩu chuyển sang /admin/login với tài khoản staff vì yêu cầu thay đổi, giữ nguyên assertion.
+- Cần làm khi cài: điền MAIL_* trong .env (Gmail App Password), chạy php artisan migrate (2 migration mới).
+- Gửi SMS thật sau này: viết class implement App\Services\Otp\SmsSender rồi đổi binding trong AppServiceProvider.
+
+## v1.2 Khách hàng và vi phạm (C4)
+- Bảng mới violations (loại: trả xe trễ, hư hỏng, vi phạm giao thông, khác). users.violation_count luôn đếm lại từ bảng này.
+- Trả xe quá giờ ân hạn (rental.late_grace_minutes) thì hệ thống tự ghi "Trả xe trễ", mỗi đơn một lần. Phụ thu vẫn nằm ở đơn, vi phạm không tính tiền thêm.
+- Admin > Khách hàng: tìm theo tên, SĐT, email, CCCD; lọc có vi phạm, đã khóa; chi tiết khách có tổng quan, vi phạm, đơn gần đây.
+- Khóa tài khoản: chỉ admin. Khóa xong khách bị đăng xuất khỏi mọi thiết bị và không nhận được mã OTP.
+- Ghi vi phạm tay: staff và admin. Xóa vi phạm: chỉ admin. Từ 3 vi phạm trở lên thì hiện cảnh báo (CustomerService::WARN_VIOLATIONS).
+- Quyền mới: customer.lock, violation.create, violation.delete (config/permissions.php).
+- Khi cài: php artisan migrate (1 migration mới). Muốn ghi bù vi phạm trả trễ cho đơn cũ: gọi ViolationService::recordLateReturn cho các đơn đã trả.
+- Test: CustomerManagementTest (17).
