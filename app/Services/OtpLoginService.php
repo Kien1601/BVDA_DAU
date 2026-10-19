@@ -128,18 +128,73 @@ class OtpLoginService
         return $user;
     }
 
+        /** Tạo tài khoản khách sau khi đã xác minh mã. Không có mật khẩu. */
+    public function registerCustomer(string $identifier, LoginChannel $channel, string $name, ?string $phone = null, ?string $email = null): User
+    {
+        // Bấm gửi hai lần: tài khoản đã được tạo ở lần trước
+        if ($user = $this->findUser($identifier, $channel)) {
+            $this->ensureCanUseOtp($user);
+
+            return $user;
+        }
+
+        if ($channel === LoginChannel::Email) {
+            $email = $identifier;
+            $phone = self::normalizePhone((string) $phone);
+            if (! $phone) {
+                throw ValidationException::withMessages(['phone' => 'Số điện thoại di động không hợp lệ.']);
+            }
+        } else {
+            $phone = $identifier;
+            $email = $email ? mb_strtolower(trim($email)) : null;
+        }
+
+        if (User::where('phone', $phone)->exists()) {
+            throw ValidationException::withMessages(['phone' => 'Số điện thoại này đã có tài khoản. Hãy đăng nhập bằng số điện thoại đó.']);
+        }
+        if ($email && User::where('email', $email)->exists()) {
+            throw ValidationException::withMessages(['email' => 'Email này đã có tài khoản. Hãy đăng nhập bằng email đó.']);
+        }
+
+        return User::forceCreate([
+            'name' => trim($name),
+            'email' => $email,
+            'phone' => $phone,
+            'password' => null,
+            'role' => 'customer',
+            'is_active' => true,
+            'email_verified_at' => $channel === LoginChannel::Email ? now() : null,
+        ]);
+    }
+
+        /** Email (hoặc SĐT) của nhân viên thì trả về email để chuyển sang đăng nhập mật khẩu */
+    public function staffEmail(string $input): ?string
+    {
+        [$identifier, $channel] = $this->parseIdentifier($input);
+        $user = $this->findUser($identifier, $channel);
+
+        if (! $user) {
+            return null;
+        }
+
+        $role = $user->role instanceof \BackedEnum ? $user->role->value : $user->role;
+
+        return $role === 'customer' ? null : $user->email;
+    }
+
     /** Chỉ khách hàng đang hoạt động mới đăng nhập bằng OTP. Chưa có tài khoản thì cho qua */
-    private function ensureCanUseOtp(?User $user): void
+        private function ensureCanUseOtp(?User $user): void
     {
         if (! $user) {
             return;
         }
-        if ($user->role !== 'customer') {
-            throw ValidationException::withMessages(['identifier' => 'Tài khoản nhân viên đăng nhập bằng mật khẩu ở trang quản lý.']);
-        }
+
         $role = $user->role instanceof \BackedEnum ? $user->role->value : $user->role;
 
         if ($role !== 'customer') {
+            throw ValidationException::withMessages(['identifier' => 'Tài khoản nhân viên đăng nhập bằng mật khẩu ở trang quản lý.']);
+        }
+        if (! $user->is_active) {
             throw ValidationException::withMessages(['identifier' => 'Tài khoản đã bị khóa. Vui lòng liên hệ cửa hàng.']);
         }
     }

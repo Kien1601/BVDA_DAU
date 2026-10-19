@@ -32,7 +32,7 @@
             <ul class="space-y-2.5 text-sm">
                 @guest
                     <li><a href="{{ route('login') }}" class="text-fg-soft transition-colors hover:text-fg">Đăng nhập</a></li>
-                    <li><a href="{{ route('register') }}" class="text-fg-soft transition-colors hover:text-fg">Đăng ký</a></li>
+                    
                 @else
                     <li><span class="text-fg-soft">{{ auth()->user()->name }}</span></li>
                 @endguest

@@ -5,7 +5,7 @@
                     <span class="text-sm text-fg">{{ $order->status->label() }}</span>
                 </div>
                 <dl class="grid gap-4 sm:grid-cols-2 text-sm">
-                    <div><dt class="{{ $label }}">Khách</dt><dd class="text-fg">{{ $order->user->name }}</dd></div>
+                    <div><dt class="{{ $label }}">Khách</dt><dd class="text-fg"><a href="{{ route('admin.customers.show', $order->user) }}" class="underline-offset-4 hover:text-vermilion hover:underline">{{ $order->user->name }}</a></dd></div>
                     <div><dt class="{{ $label }}">Điện thoại</dt><dd class="text-fg">{{ $order->user->phone ?? '—' }}</dd></div>
                     <div><dt class="{{ $label }}">CCCD</dt><dd class="text-fg">{{ $order->user->id_card_number ?? '—' }}</dd></div>
                     <div><dt class="{{ $label }}">Số lần vi phạm</dt><dd class="text-fg tabular-nums">{{ $order->user->violation_count ?? 0 }}</dd></div>

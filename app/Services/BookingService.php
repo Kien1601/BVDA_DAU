@@ -11,6 +11,8 @@ use App\Models\Vehicle;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Enums\AlertKind;
+
 
 /**
  * B2 - Đặt thuê xe. Mọi quy tắc nghiệp vụ nằm ở đây; controller chỉ gọi lại.
@@ -97,7 +99,7 @@ class BookingService
 
             $quote = $this->quote($locked, $start, $end, $promotionCode);
 
-            return RentalOrder::create([
+            $order = RentalOrder::create([
                 'user_id' => $customer->id,
                 'vehicle_id' => $locked->id,
                 'promotion_id' => $quote['promotion']?->id,
@@ -111,17 +113,21 @@ class BookingService
                 'expires_at' => now()->addMinutes((int) config('rental.hold_minutes')),
                 'note' => $note,
             ]);
+            app(OrderAlertService::class)->notifyEvent($order, AlertKind::NewBooking);
+
+        return $order;
         });
     }
 
     /** B2.5 - khách hủy đơn của mình */
     public function cancelByCustomer(RentalOrder $order, ?string $reason = null): RentalOrder
     {
-        if (! $order->status->cancellableByCustomer()) {
-            throw ValidationException::withMessages([
-                'order' => 'Đơn đang thuê hoặc đã kết thúc, không thể hủy.',
-            ]);
-        }
+            if (! $order->status->cancellableByCustomer()) {
+        throw ValidationException::withMessages([
+            'order' => 'Đơn đang thuê hoặc đã kết thúc, không thể hủy.',
+        ]);
+    }
+
 
         $order->forceFill([
             'status' => OrderStatus::Cancelled,
@@ -130,6 +136,8 @@ class BookingService
         ])->save();
 
         app(PaymentService::class)->handleCancelled($order, null, $reason ?: 'Khách hủy đơn');
+
+        app(OrderAlertService::class)->notifyEvent($order, AlertKind::CustomerCancelled);
 
         return $order;
     }

@@ -13,7 +13,7 @@
     </form>
 @else
     <a href="{{ route('login') }}" class="text-[11px] font-medium uppercase tracking-label text-fg-soft transition-colors hover:text-fg">
-        Đăng nhập
+        Đăng nhập / Đăng ký
     </a>
-    <x-button variant="light" :href="route('register')">Đăng ký</x-button>
+    
 @endauth

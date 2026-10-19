@@ -40,6 +40,8 @@ class RentalOrder extends Model
             'total_amount' => 'integer',
             'deposit_amount' => 'integer',
             'surcharge_amount' => 'integer',
+            'early_return_at' => 'datetime',
+            'early_return_requested_at' => 'datetime',
         ];
     }
 
@@ -57,6 +59,11 @@ class RentalOrder extends Model
     public function promotion(): BelongsTo
     {
         return $this->belongsTo(Promotion::class);
+    }
+
+    public function violations(): HasMany
+    {
+        return $this->hasMany(Violation::class);
     }
 
     public function approvedBy(): BelongsTo

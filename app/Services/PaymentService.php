@@ -12,6 +12,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Enums\AlertKind;
+
 
 class PaymentService
 {
@@ -57,7 +59,7 @@ class PaymentService
         });
     }
 
-    /** Ghi nhận thanh toán thành công. Cổng có thể gọi về nhiều lần nên phải chạy lặp lại được */
+       /** Ghi nhận thanh toán thành công. Cổng có thể gọi về nhiều lần nên phải chạy lặp lại được */
     public function markPaid(Payment $payment, ?string $providerTxnId = null, array $payload = [], ?User $staff = null): Payment
     {
         return DB::transaction(function () use ($payment, $providerTxnId, $payload, $staff) {
@@ -90,6 +92,11 @@ class PaymentService
                     $this->createRefund($order, $payment->amount, $payment->method, null, 'Đơn đã hủy trước khi nhận tiền cọc');
                 } else {
                     $order->forceFill(['expires_at' => null])->save();
+
+                    // C9.2: khách tự trả cọc online thì báo nhân viên; nhân viên thu tiền mặt thì không cần
+                    if ($staff === null) {
+                        app(OrderAlertService::class)->notifyEvent($order, AlertKind::DepositPaid);
+                    }
                 }
             }
 
@@ -165,6 +172,23 @@ class PaymentService
 
         return $this->createRefund($order, $paid, $lastPaid->method, $staff, $reason);
     }
+
+    /** C9.6 - Tổng tiền giảm sau khi tính lại mà khách đã trả nhiều hơn: hoàn phần dư */
+public function refundOverpaid(RentalOrder $order, ?User $staff, string $reason): ?Payment
+{
+    $over = $order->paidAmount() - ($order->total_amount + $order->surcharge_amount);
+    if ($over <= 0) {
+        return null;
+    }
+
+    $lastPaid = $order->payments()
+        ->where('status', PaymentStatus::Paid->value)
+        ->where('type', '!=', PaymentType::Refund->value)
+        ->latest('paid_at')
+        ->first();
+
+    return $this->createRefund($order, $over, $lastPaid->method, $staff, $reason);
+}
 
     /** Nhân viên xác nhận đã hoàn tiền cho khách */
     public function confirmRefund(Payment $refund, User $staff): Payment

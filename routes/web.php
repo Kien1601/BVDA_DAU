@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
         ->name('account.orders');
     Route::get('/account/orders/{order}/invoice', [Customer\AccountController::class, 'invoice'])
         ->name('account.invoice');
+    Route::post('/bookings/{order}/early-return', [\App\Http\Controllers\EarlyReturnController::class, 'store'])
+        ->name('booking.early-return');
+    Route::delete('/bookings/{order}/early-return', [\App\Http\Controllers\EarlyReturnController::class, 'destroy'])
+        ->name('booking.early-return.cancel');
 });
 
 // Route mặc định của Breeze, giữ tạm vì menu Breeze đang dùng
@@ -101,6 +105,34 @@ Route::middleware(['auth', 'role:staff,admin'])
                 Route::post('/{order}/cash', 'collectCash')->name('collect-cash');
                 Route::post('/{order}/refunds/{payment}', 'confirmRefund')->name('confirm-refund');
             });
+
+        // C4: Khách hàng
+        Route::middleware('can:customer.view')
+            ->prefix('customers')
+            ->name('customers.')
+            ->controller(\App\Http\Controllers\Admin\CustomerController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/{customer}', 'show')->name('show');
+                Route::post('/{customer}/toggle-lock', 'toggleLock')
+                    ->middleware('can:customer.lock')
+                    ->name('toggle-lock');
+                Route::post('/{customer}/violations', 'storeViolation')
+                    ->middleware('can:violation.create')
+                    ->name('violations.store');
+                Route::delete('/{customer}/violations/{violation}', 'destroyViolation')
+                    ->middleware('can:violation.delete')
+                    ->name('violations.destroy');
+            });
+
+            // C7: Nhân viên
+        Route::prefix('notifications')->name('notifications.')->controller(\App\Http\Controllers\Admin\NotificationController::class)
+        ->group(function () {
+            Route::get('/feed', 'feed')->name('feed');
+            Route::get('/{id}/open', 'open')->name('open');
+            Route::post('/read-all', 'readAll')->name('read-all');
+            Route::get('/', 'index')->name('index');
+        });
                 // C8 - Báo cáo (chỉ admin)
         Route::middleware('can:report.view')
             ->prefix('reports')

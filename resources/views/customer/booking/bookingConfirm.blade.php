@@ -49,6 +49,7 @@
 
         <div class="mt-6">
             @include('customer.booking.partials.payment-box')
+            @include('customer.booking.partials.early-return')
         </div>
 
         <div class="mt-6 grid gap-6 md:grid-cols-2">

@@ -10,6 +10,17 @@
     @endphp
 
     <x-page-header title="Đơn #{{ $order->id }}" />
+        
+        @if ($order->early_return_at && $order->status === \App\Enums\OrderStatus::Active)
+    <div class="mb-4 rounded-lg border border-ember bg-card px-4 py-3 text-sm text-fg">
+        <span class="mr-2 inline-block h-2 w-2 rounded-full bg-ember"></span>
+        Khách báo trả sớm lúc <strong>{{ $order->early_return_at->format('H:i d/m/Y') }}</strong>
+        (hẹn cũ {{ $order->end_time->format('H:i d/m/Y') }}).
+        @if ($order->early_return_note)
+            <span class="text-fg-soft">Ghi chú: {{ $order->early_return_note }}</span>
+        @endif
+    </div>
+@endif
 
     <a href="{{ route('admin.orders.index') }}" class="mb-4 inline-block text-sm text-fg-soft hover:text-vermilion">← Danh sách đơn</a>
 
