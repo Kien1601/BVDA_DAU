@@ -26,6 +26,12 @@ class OtpLoginController extends Controller
     {
         $data = $request->validate(['identifier' => ['required', 'string', 'max:191']]);
 
+                if ($email = $this->otp->staffEmail($data['identifier'])) {
+            return redirect()->route('admin.login')
+                ->withInput(['email' => $email])
+                ->with('status', 'Tài khoản nhân viên: nhập mật khẩu để đăng nhập.');
+        }
+        
         $this->sendCode($data['identifier'], $request->ip());
 
         return redirect()->route('otp.verify');
@@ -88,6 +94,58 @@ class OtpLoginController extends Controller
         $this->sendCode($pending['identifier'], $request->ip());
 
         return back()->with('status', 'Đã gửi mã mới.');
+    }
+
+        public function profile(Request $request): View|RedirectResponse
+    {
+        $verified = $this->verifiedSession($request);
+        if (! $verified) {
+            return redirect()->route('login')->withErrors(['identifier' => 'Phiên xác minh đã hết, vui lòng nhận mã mới.']);
+        }
+
+        return view('auth.otp.completeProfile', [
+            'identifier' => $verified['identifier'],
+            'channel' => LoginChannel::from($verified['channel']),
+        ]);
+    }
+
+    public function storeProfile(Request $request): RedirectResponse
+    {
+        $verified = $this->verifiedSession($request);
+        if (! $verified) {
+            return redirect()->route('login')->withErrors(['identifier' => 'Phiên xác minh đã hết, vui lòng nhận mã mới.']);
+        }
+
+        $channel = LoginChannel::from($verified['channel']);
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'phone' => [$channel === LoginChannel::Email ? 'required' : 'nullable', 'string', 'max:20'],
+            'email' => ['nullable', 'email', 'max:191'],
+        ]);
+
+        $user = $this->otp->registerCustomer(
+            $verified['identifier'], $channel, $data['name'], $data['phone'] ?? null, $data['email'] ?? null,
+        );
+
+        $request->session()->forget('otp_verified');
+        Auth::login($user, true);
+        $request->session()->regenerate();
+
+        return redirect()->intended('/');
+    }
+
+    /** Đã xác minh mã trong 15 phút gần đây thì mới cho tạo tài khoản */
+    private function verifiedSession(Request $request): ?array
+    {
+        $verified = $request->session()->get('otp_verified');
+
+        if (! $verified || now()->timestamp - $verified['at'] > 15 * 60) {
+            $request->session()->forget('otp_verified');
+
+            return null;
+        }
+
+        return $verified;
     }
 
     private function sendCode(string $input, ?string $ip): void

@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -25,6 +26,11 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+                $role = $request->user()->role instanceof \BackedEnum ? $request->user()->role->value : $request->user()->role;
+        if ($role === 'customer') {
+            Auth::guard('web')->logout();
+            throw ValidationException::withMessages(['email' => 'Khách hàng đăng nhập bằng mã ở trang đăng nhập chính.']);
+        }
 
         $request->session()->regenerate();
 
