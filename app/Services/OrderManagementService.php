@@ -14,12 +14,11 @@ use Illuminate\Validation\ValidationException;
 
 class OrderManagementService
 {
-    public function __construct(
+        public function __construct(
         private BookingService $booking,
-        private PaymentService $payments,
         private ViolationService $violations,
-    ) {
-    }
+        private PaymentService $payments,
+    ) {}
 
     /** Danh sách đơn cho nhân viên: lọc trạng thái, tìm theo mã đơn / tên, SĐT khách / biển số. */
     public function search(?string $status, ?string $keyword): LengthAwarePaginator
@@ -166,13 +165,16 @@ class OrderManagementService
                 $vehicle->update(['status' => VehicleStatus::Available]);
             }
 
-            $order->update([
+                        $order->update([
                 'status' => OrderStatus::Completed,
                 'actual_return_time' => $returnedAt,
                 'returned_by' => $staff->id,
                 'surcharge_amount' => $lateFee + $extraFee,
                 'surcharge_note' => $note,
             ]);
+
+            $this->recalculateEarlyReturn($order, $returnedAt, $staff);
+
             $this->violations->recordLateReturn($order);
             return $order;
         });
@@ -211,6 +213,28 @@ class OrderManagementService
         return $this->booking->rentFor($order->vehicle, $order->end_time, $returnedAt)['amount'];
     }
 
+        /** C9.6 - Khách đã báo trả sớm và trả trước giờ hẹn: tính lại tiền thuê theo giờ trả thực tế */
+    private function recalculateEarlyReturn(RentalOrder $order, Carbon $returnedAt, User $staff): void
+    {
+        if (! $order->early_return_at || $returnedAt->gte($order->end_time)) {
+            return;
+        }
+
+        $subtotal = $this->booking->rentFor($order->vehicle, $order->start_time, $returnedAt)['amount'];
+        if ($subtotal >= $order->subtotal_amount) {
+            return;
+        }
+
+        $discount = $order->promotion?->discountFor($subtotal) ?? 0;
+
+        $order->update([
+            'subtotal_amount' => $subtotal,
+            'discount_amount' => $discount,
+            'total_amount' => $subtotal - $discount,
+        ]);
+
+        $this->payments->refundOverpaid($order, $staff, 'Trả xe sớm, hoàn tiền thời gian chưa dùng');
+    }
     private function lock(RentalOrder $order): RentalOrder
     {
         return RentalOrder::whereKey($order->getKey())->lockForUpdate()->firstOrFail();
