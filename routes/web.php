@@ -44,6 +44,10 @@ Route::middleware('auth')->group(function () {
         ->name('account.orders');
     Route::get('/account/orders/{order}/invoice', [Customer\AccountController::class, 'invoice'])
         ->name('account.invoice');
+    Route::post('/bookings/{order}/early-return', [\App\Http\Controllers\EarlyReturnController::class, 'store'])
+        ->name('booking.early-return');
+    Route::delete('/bookings/{order}/early-return', [\App\Http\Controllers\EarlyReturnController::class, 'destroy'])
+        ->name('booking.early-return.cancel');
 });
 
 // Route mặc định của Breeze, giữ tạm vì menu Breeze đang dùng
@@ -127,6 +131,7 @@ Route::middleware(['auth', 'role:staff,admin'])
             Route::get('/feed', 'feed')->name('feed');
             Route::get('/{id}/open', 'open')->name('open');
             Route::post('/read-all', 'readAll')->name('read-all');
+            Route::get('/', 'index')->name('index');
         });
                 // C8 - Báo cáo (chỉ admin)
         Route::middleware('can:report.view')

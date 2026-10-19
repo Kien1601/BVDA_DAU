@@ -1,6 +1,4 @@
-@php($feed = \App\Http\Controllers\Admin\NotificationController::payload(auth()->user()))
-
-<div x-data="notificationBell(@js($feed), @js(route('admin.notifications.feed')), @js(auth()->id()))"
+<div x-data="notificationBell(@js(auth()->user()->unreadNotifications()->count()), @js(route('admin.notifications.feed')), @js(auth()->id()))"
      @click.outside="open = false" @keydown.escape.window="open = false" class="relative">
     <button type="button" @click="toggle()" aria-label="Thông báo" class="relative rounded p-2 hover:text-vermilion">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5">
@@ -20,7 +18,7 @@
             </form>
         </div>
 
-        <p x-show="items.length === 0" class="px-4 py-6 text-center text-sm text-fg-soft">Chưa có thông báo nào.</p>
+        <p x-show="loaded && items.length === 0" class="px-4 py-6 text-center text-sm text-fg-soft">Chưa có thông báo nào.</p>
 
         <ul class="max-h-96 divide-y divide-edge-soft overflow-y-auto">
             <template x-for="item in items" :key="item.id">
@@ -41,6 +39,7 @@
                 </li>
             </template>
         </ul>
+        <a href="{{ route('admin.notifications.index') }}" class="block border-t border-edge-soft px-4 py-2 text-center text-sm text-fg-soft hover:text-vermilion">Xem tất cả</a>
     </div>
         <div x-show="toast" x-cloak x-transition
          class="fixed bottom-4 right-4 z-50 w-80 rounded-lg border border-edge-soft bg-card p-4 text-fg shadow-lg">

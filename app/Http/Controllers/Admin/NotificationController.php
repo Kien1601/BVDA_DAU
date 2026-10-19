@@ -48,4 +48,17 @@ class NotificationController extends Controller
                 ])->values(),
         ];
     }
+        public function index(Request $request)
+    {
+        $user = $request->user();
+        $onlyUnread = $request->query('filter') === 'unread';
+
+        return view('admin.notification-management.notificationList', [
+            'notifications' => ($onlyUnread ? $user->unreadNotifications() : $user->notifications())
+                ->paginate(20)
+                ->withQueryString(),
+            'onlyUnread' => $onlyUnread,
+            'unreadCount' => $user->unreadNotifications()->count(),
+        ]);
+    }
 }

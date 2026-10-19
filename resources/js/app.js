@@ -4,10 +4,12 @@ import { initThemeToggle } from './shared/theme/theme';
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
-Alpine.data('notificationBell', (initial, feedUrl, userId) => ({
+Alpine.data('notificationBell', (unread, feedUrl, userId) => ({
     open: false,
-    unread: initial.unread,
-    items: initial.items,
+    unread,
+    // Danh sách tải khi mở chuông (toggle gọi refresh), trang không nhúng sẵn nội dung thông báo
+    items: [],
+    loaded: false,
     toast: null,
     toastTimer: null,
 
@@ -35,7 +37,7 @@ Alpine.data('notificationBell', (initial, feedUrl, userId) => ({
 
     async refresh() {
         const res = await window.fetch(feedUrl, { headers: { Accept: 'application/json' } });
-        if (res.ok) Object.assign(this, await res.json());
+        if (res.ok) Object.assign(this, await res.json(), { loaded: true });
     },
 }));
 Alpine.start();
