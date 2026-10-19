@@ -26,6 +26,7 @@ return [
     'alert_pickup_before_minutes' => 60,
     'alert_pickup_late_minutes' => 30,
     'alert_return_before_minutes' => 60,
+    'early_return_min_minutes' => 30,
 
         // A5: đăng nhập bằng mã OTP
     'otp' => [

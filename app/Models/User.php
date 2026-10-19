@@ -39,7 +39,7 @@ class User extends Authenticatable
         return $this->hasMany(RentalOrder::class);
     }
 
-        public function violations(): \Illuminate\Database\Eloquent\Relations\HasMany
+            public function violations(): HasMany
     {
         return $this->hasMany(Violation::class)->latest('occurred_at');
     }

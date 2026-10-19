@@ -31,9 +31,13 @@ class OrderAlertService
             ->where('end_time', '>', $now)
             ->each(fn ($o) => $send($o, AlertKind::PickupLate, $o->start_time));
 
+        $soon = [$now, $now->copy()->addMinutes(config('rental.alert_return_before_minutes'))];
+
         $this->orders(OrderStatus::Active)
-            ->whereBetween('end_time', [$now, $now->copy()->addMinutes(config('rental.alert_return_before_minutes'))])
-            ->each(fn ($o) => $send($o, AlertKind::ReturnSoon, $o->end_time));
+            ->where(fn ($q) => $q
+                ->where(fn ($q) => $q->whereNotNull('early_return_at')->whereBetween('early_return_at', $soon))
+                ->orWhere(fn ($q) => $q->whereNull('early_return_at')->whereBetween('end_time', $soon)))
+            ->each(fn ($o) => $send($o, AlertKind::ReturnSoon, $o->early_return_at ?? $o->end_time));
 
         $this->orders(OrderStatus::Active)
             ->where('end_time', '<', $now->copy()->subMinutes(config('rental.late_grace_minutes')))
