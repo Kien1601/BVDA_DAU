@@ -31,11 +31,10 @@ class PricingTest extends TestCase
         ]);
     }
 
-    public function test_staff_khong_vao_duoc_trang_gia(): void
+        public function test_staff_vao_duoc_trang_gia_khach_thi_khong(): void
     {
-        $this->actingAs(User::factory()->staff()->create())
-            ->get('/admin/pricing')
-            ->assertForbidden();
+        $this->actingAs(User::factory()->staff()->create())->get('/admin/pricing')->assertOk();
+        $this->actingAs(User::factory()->create(['role' => 'customer']))->get('/admin/pricing')->assertForbidden();
     }
 
     public function test_ap_gia_theo_loai_chi_doi_xe_cung_loai_va_bo_qua_xe_da_xoa(): void

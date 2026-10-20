@@ -1,4 +1,3 @@
-//Đăng nhập quản lý
 <x-guest-layout>
     <div class="mb-6">
         <div class="flex items-center gap-2 text-[10px] font-medium uppercase tracking-label text-fg-muted">

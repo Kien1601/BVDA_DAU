@@ -11,6 +11,7 @@ use App\Models\RentalOrder;
 use App\Models\User;
 use App\Models\Vehicle;
 use App\Services\ReportService;
+use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -55,7 +56,7 @@ class ReportTest extends TestCase
         ], $attrs));
     }
 
-    private function taoThanhToan(RentalOrder $don, PaymentType $type, int $amount, $paidAt, PaymentStatus $status = PaymentStatus::Paid): Payment
+    private function taoThanhToan(RentalOrder $don, PaymentType $type, int $amount, ?CarbonInterface $paidAt, PaymentStatus $status = PaymentStatus::Paid): Payment
     {
         return $don->payments()->create([
             'type' => $type,
@@ -135,12 +136,15 @@ class ReportTest extends TestCase
             ->assertSee('Doanh thu thực thu');
     }
 
-    public function test_nhan_vien_khong_xem_duoc_bao_cao(): void
+        public function test_nhan_vien_xem_duoc_bao_cao_khach_thi_khong(): void
     {
         $nhanVien = $this->taoNhanVien();
 
-        $this->actingAs($nhanVien)->get(route('admin.reports.index'))->assertForbidden();
-        $this->actingAs($nhanVien)->get(route('admin.reports.export'))->assertForbidden();
+        $this->actingAs($nhanVien)->get(route('admin.reports.index'))->assertOk();
+        $this->actingAs($nhanVien)->get(route('admin.reports.export'))->assertOk();
+
+        $khach = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($khach)->get(route('admin.reports.index'))->assertForbidden();
     }
 
     public function test_ky_nhap_nguoc_hoac_qua_dai_tu_sua(): void
@@ -172,7 +176,7 @@ class ReportTest extends TestCase
         $this->assertStringContainsString('123000', $noiDung);
     }
 
-    public function test_dashboard_admin_thay_doanh_thu_nhan_vien_khong_thay(): void
+    public function test_dashboard_admin_va_nhan_vien_deu_thay_doanh_thu(): void
     {
         $don = $this->taoDon(OrderStatus::Completed);
         $this->taoThanhToan($don, PaymentType::Deposit, 100000, now());
@@ -186,6 +190,6 @@ class ReportTest extends TestCase
         $this->actingAs($this->taoNhanVien())
             ->get(route('admin.dashboard'))
             ->assertOk()
-            ->assertDontSee('Doanh thu hôm nay');
+            ->assertSee('Doanh thu hôm nay');
     }
 }

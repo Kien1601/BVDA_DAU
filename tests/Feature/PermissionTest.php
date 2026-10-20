@@ -13,18 +13,19 @@ class PermissionTest extends TestCase
 
     // ---------- Đăng ký ----------
 
-    public function test_dang_ky_luon_la_customer_du_gui_role_admin(): void
+        public function test_trang_dang_ky_da_go_khong_tu_tao_duoc_tai_khoan(): void
     {
+        // Sau A5 khách không tự đăng ký; tài khoản khách chỉ được tạo qua đăng nhập bằng mã
         $this->post('/register', [
-            'name' => 'Khach Test',
+            'name' => 'Khách',
             'email' => 'khach@test.vn',
             'phone' => '0900000000',
             'password' => 'password',
             'password_confirmation' => 'password',
-            'role' => 'admin', // cố tình gửi role để kiểm tra bị bỏ qua
-        ])->assertRedirect('/');
+            'role' => 'admin',
+        ])->assertNotFound();
 
-        $this->assertSame(UserRole::Customer, User::where('email', 'khach@test.vn')->first()->role);
+        $this->assertDatabaseMissing('users', ['email' => 'khach@test.vn']);
     }
 
     // ---------- Đăng nhập ----------
@@ -41,7 +42,7 @@ class PermissionTest extends TestCase
     {
         $user = User::factory()->staff()->create();
 
-        $this->post('/login', ['email' => $user->email, 'password' => 'password'])
+        $this->post('/admin/login', ['email' => $user->email, 'password' => 'password'])
             ->assertRedirect('/admin');
     }
 
@@ -49,7 +50,7 @@ class PermissionTest extends TestCase
     {
         $user = User::factory()->staff()->create(['is_active' => false]);
 
-        $this->post('/login', ['email' => $user->email, 'password' => 'password']);
+        $this->post('a/login', ['email' => $user->email, 'password' => 'password']);
 
         $this->assertGuest();
     }
@@ -58,7 +59,7 @@ class PermissionTest extends TestCase
 
     public function test_chua_dang_nhap_vao_admin_bi_chuyen_ve_login(): void
     {
-        $this->get('/admin/dashboard')->assertRedirect('/login');
+        $this->get('/admin/dashboard')->assertRedirect('/admin/login');
     }
 
     public function test_customer_vao_admin_bi_403(): void
@@ -70,13 +71,13 @@ class PermissionTest extends TestCase
 
     // ---------- Lớp 2 + 3: Gate và @can ----------
 
-    public function test_staff_vao_dashboard_nhung_khong_thay_doanh_thu(): void
+        public function test_staff_vao_dashboard_thay_ca_doanh_thu(): void
     {
         $this->actingAs(User::factory()->staff()->create())
             ->get('/admin/dashboard')
             ->assertOk()
             ->assertSee('Đơn chờ duyệt')
-            ->assertDontSee('Doanh thu hôm nay');
+            ->assertSee('Doanh thu hôm nay');
     }
 
     public function test_admin_thay_doanh_thu(): void
@@ -96,12 +97,16 @@ class PermissionTest extends TestCase
         }
     }
 
-    public function test_staff_khong_co_quyen_cua_admin(): void
+        public function test_staff_co_moi_quyen_quan_ly_tru_quan_ly_nhan_vien(): void
     {
         $staff = User::factory()->staff()->create();
+        $khach = User::factory()->create(['role' => 'customer']);
 
-        foreach (['vehicle.manage', 'vehicle.delete', 'store.manage', 'pricing.manage', 'user.manage', 'report.view'] as $ability) {
-            $this->assertFalse($staff->can($ability), "Staff không được có quyền {$ability}");
+        foreach (['vehicle.manage', 'vehicle.delete', 'store.manage', 'pricing.manage', 'report.view', 'customer.lock', 'violation.delete'] as $ability) {
+            $this->assertTrue($staff->can($ability), "Staff phải có quyền {$ability}");
+            $this->assertFalse($khach->can($ability), "Khách không được có quyền {$ability}");
         }
+
+        $this->assertFalse($staff->can('user.manage'), 'Chỉ admin được quản lý tài khoản nhân viên');
     }
 }

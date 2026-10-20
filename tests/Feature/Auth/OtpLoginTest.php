@@ -57,7 +57,7 @@ class OtpLoginTest extends TestCase
 
     private function mailCode(): string
     {
-        $code = null;
+        $code = '';
         Mail::assertSent(LoginCodeMail::class, function (LoginCodeMail $mail) use (&$code) {
             $code = $mail->code;
 

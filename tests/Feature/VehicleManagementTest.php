@@ -54,11 +54,10 @@ class VehicleManagementTest extends TestCase
         return Vehicle::create($data);
     }
 
-    public function test_staff_khong_vao_duoc_quan_ly_xe(): void
+        public function test_staff_vao_duoc_quan_ly_xe_khach_thi_khong(): void
     {
-        $this->actingAs(User::factory()->staff()->create())
-            ->get('/admin/vehicles')
-            ->assertForbidden();
+        $this->actingAs(User::factory()->staff()->create())->get('/admin/vehicles')->assertOk();
+        $this->actingAs(User::factory()->create(['role' => 'customer']))->get('/admin/vehicles')->assertForbidden();
     }
 
     public function test_admin_them_xe_kem_anh(): void

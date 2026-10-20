@@ -26,7 +26,7 @@ class MonitorAccessTest extends TestCase
 
     public function test_chua_dang_nhap_bi_chuyen_ve_login(): void
     {
-        $this->get('/admin/gps-monitor/positions')->assertRedirect('/login');
+        $this->get('/admin/gps-monitor/positions')->assertRedirect('/admin/login');
     }
 
     public function test_customer_khong_lay_duoc_vi_tri(): void

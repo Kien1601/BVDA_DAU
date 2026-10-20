@@ -124,7 +124,17 @@ Route::middleware(['auth', 'role:staff,admin'])
                     ->middleware('can:violation.delete')
                     ->name('violations.destroy');
             });
-
+            Route::middleware('can:user.manage')
+            ->prefix('staff')
+            ->name('staff.')
+            ->controller(\App\Http\Controllers\Admin\StaffController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{staff}/edit', 'edit')->name('edit');
+        Route::put('/{staff}', 'update')->name('update');
+        Route::post('/{staff}/toggle-lock', 'toggleLock')->name('toggle-lock');
+    });
             // C7: Nhân viên
         Route::prefix('notifications')->name('notifications.')->controller(\App\Http\Controllers\Admin\NotificationController::class)
         ->group(function () {

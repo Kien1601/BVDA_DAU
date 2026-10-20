@@ -37,11 +37,10 @@ class StoreManagementTest extends TestCase
         return Store::create($this->validData());
     }
 
-    public function test_staff_khong_vao_duoc_quan_ly_cua_hang(): void
+       public function test_staff_vao_duoc_quan_ly_cua_hang_khach_thi_khong(): void
     {
-        $this->actingAs(User::factory()->staff()->create())
-            ->get('/admin/stores')
-            ->assertForbidden();
+        $this->actingAs(User::factory()->staff()->create())->get('/admin/stores')->assertOk();
+        $this->actingAs(User::factory()->create(['role' => 'customer']))->get('/admin/stores')->assertForbidden();
     }
 
     public function test_admin_xem_va_tim_kiem_danh_sach(): void
