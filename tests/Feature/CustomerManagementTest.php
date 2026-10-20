@@ -135,15 +135,15 @@ class CustomerManagementTest extends TestCase
         $this->assertTrue($khach->refresh()->is_active);
     }
 
-    public function test_nhan_vien_khong_khoa_duoc_tai_khoan(): void
+        public function test_nhan_vien_khoa_duoc_tai_khoan(): void
     {
         $khach = $this->taoKhach();
 
         $this->actingAs($this->taoNhanVien())
             ->post(route('admin.customers.toggle-lock', $khach))
-            ->assertForbidden();
+            ->assertRedirect();
 
-        $this->assertTrue($khach->refresh()->is_active);
+        $this->assertFalse($khach->refresh()->is_active);
     }
 
     public function test_tra_xe_tre_tu_ghi_vi_pham(): void
@@ -245,18 +245,20 @@ class CustomerManagementTest extends TestCase
             ->assertSessionHasErrors('rental_order_id');
     }
 
-    public function test_chi_admin_xoa_duoc_vi_pham(): void
+        public function test_nhan_vien_va_admin_xoa_duoc_vi_pham_khach_thi_khong(): void
     {
         $khach = $this->taoKhach();
-        $viPham = $this->ghiViPham($khach);
-        $route = route('admin.customers.violations.destroy', [$khach, $viPham]);
+        $route = fn ($viPham) => route('admin.customers.violations.destroy', [$khach, $viPham]);
 
-        $this->actingAs($this->taoNhanVien())->delete($route)->assertForbidden();
-        $this->assertSame(1, Violation::count());
-
-        $this->actingAs($this->taoNhanVien('admin'))->delete($route)->assertSessionHasNoErrors();
+        $this->actingAs($this->taoNhanVien())->delete($route($this->ghiViPham($khach)))->assertSessionHasNoErrors();
         $this->assertSame(0, Violation::count());
-        $this->assertSame(0, $khach->refresh()->violation_count);
+
+        $this->actingAs($this->taoNhanVien('admin'))->delete($route($this->ghiViPham($khach)))->assertSessionHasNoErrors();
+        $this->assertSame(0, Violation::count());
+
+        $viPham = $this->ghiViPham($khach);
+        $this->actingAs($khach)->delete($route($viPham))->assertForbidden();
+        $this->assertSame(1, Violation::count());
     }
 
     public function test_khong_xoa_vi_pham_qua_url_cua_khach_khac(): void
