@@ -11,6 +11,7 @@ use App\Models\Vehicle;
 use App\Services\BookingService;
 use App\Services\OrderAlertService;
 use App\Services\PaymentService;
+use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -56,7 +57,7 @@ class EarlyReturnTest extends TestCase
         ]);
     }
 
-    private function baoTraSom(RentalOrder $don, $luc, ?User $khach = null)
+    private function baoTraSom(RentalOrder $don, CarbonInterface $luc, ?User $khach = null)
     {
         return $this->actingAs($khach ?? $don->user)->post(route('booking.early-return', $don), [
             'early_return_at' => $luc->format('Y-m-d\TH:i'),

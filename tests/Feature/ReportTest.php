@@ -11,6 +11,7 @@ use App\Models\RentalOrder;
 use App\Models\User;
 use App\Models\Vehicle;
 use App\Services\ReportService;
+use Carbon\CarbonInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -55,7 +56,7 @@ class ReportTest extends TestCase
         ], $attrs));
     }
 
-    private function taoThanhToan(RentalOrder $don, PaymentType $type, int $amount, $paidAt, PaymentStatus $status = PaymentStatus::Paid): Payment
+    private function taoThanhToan(RentalOrder $don, PaymentType $type, int $amount, ?CarbonInterface $paidAt, PaymentStatus $status = PaymentStatus::Paid): Payment
     {
         return $don->payments()->create([
             'type' => $type,
