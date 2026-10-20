@@ -17,17 +17,18 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+        public function test_users_can_authenticate_using_the_login_screen(): void
     {
-        $user = User::factory()->create();
+        // Sau A5: chỉ nhân viên đăng nhập bằng mật khẩu, ở trang quản lý
+        $user = User::factory()->staff()->create();
 
-        $response = $this->post('/login', [
+        $response = $this->post('/admin/login', [
             'email' => $user->email,
             'password' => 'password',
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect('/');
+        $response->assertRedirect('/admin');
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
