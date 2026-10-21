@@ -155,6 +155,7 @@ Route::middleware(['auth', 'role:staff,admin'])
         // C2 - Quản lý xe (chỉ admin). Xóa tách quyền riêng: vehicle.delete
         Route::middleware('can:vehicle.manage')->group(function () {
             Route::resource('vehicles', Admin\VehicleController::class)->except(['show', 'destroy']);
+            Route::get('/fleet', [Admin\FleetController::class, 'index'])->name('fleet.index');
         });
         Route::delete('/vehicles/{vehicle}', [Admin\VehicleController::class, 'destroy'])
             ->middleware('can:vehicle.delete')

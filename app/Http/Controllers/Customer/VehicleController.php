@@ -6,6 +6,7 @@ use App\Enums\VehicleStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
 use App\Models\Vehicle;
+use App\Services\FleetService;
 use Illuminate\Http\Request;
 
 class VehicleController extends Controller
@@ -41,8 +42,9 @@ class VehicleController extends Controller
 
         $stores = Store::orderBy('name')->pluck('name', 'id');
         $hasFilters = $filters['q'] !== '' || $filters['type'] || $filters['store'] || $filters['max_price'];
-
-        return view('customer.vehicle-list.vehicleList', compact('vehicles', 'filters', 'stores', 'hasFilters'));
+                // C10 - số xe sẵn sàng theo loại (chỉ con số, không có dữ liệu GPS)
+        $stock = app(FleetService::class)->byType($filters['store'])->pluck('available', 'type');
+        return view('customer.vehicle-list.vehicleList', compact('vehicles', 'filters', 'stores', 'hasFilters', 'stock'));
     }
 
     /** B1.3 - chi tiết xe. Xe bảo dưỡng và xe đã xóa trả 404. */

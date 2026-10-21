@@ -13,6 +13,7 @@
         </div>
 
         @include('customer.vehicle-list.partials.filter-form')
+        @include('customer.vehicle-list.partials.type-stock')
         @include('customer.vehicle-list.partials.vehicle-list')
     </section>
 @endsection
