@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
     health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+                // Tin proxy (Caddy) để Laravel biết request là https
+        $middleware->trustProxies(at: '*');
         $middleware->alias([
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);

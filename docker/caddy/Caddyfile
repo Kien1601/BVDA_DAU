@@ -1,0 +1,10 @@
+{$APP_DOMAIN} {
+    encode gzip
+
+    # WebSocket của Reverb (trình duyệt kết nối wss://domain/app/...)
+    @reverb path /app/* /apps/*
+    reverse_proxy @reverb reverb:8080
+
+    # Còn lại chuyển cho nginx + PHP
+    reverse_proxy nginx:80
+}
