@@ -12,7 +12,8 @@ class VerifyGpsToken
     public function handle(Request $request, Closure $next): Response
     {
         $expected = config('gps.api_token');
-        $given = $request->bearerToken() ?? $request->header('X-GPS-Token');
+                // G1: app Traccar Client không thêm được header, nên cho đọc token từ URL /gps/traccar/{token}
+        $given = $request->bearerToken() ?? $request->header('X-GPS-Token') ?? $request->route('token');
 
         // hash_equals: so sánh an toàn, chống đoán token qua thời gian phản hồi
         if (! $expected || ! is_string($given) || ! hash_equals($expected, $given)) {
