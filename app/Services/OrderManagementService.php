@@ -26,7 +26,8 @@ class OrderManagementService
         $keyword = trim((string) $keyword);
 
         return RentalOrder::query()
-            ->with(['user', 'vehicle'])
+            // payments, vehicle.store cho ô tóm tắt (C5.8), nạp sẵn để tránh N+1
+            ->with(['user', 'vehicle.store', 'payments'])
             ->when($status, fn ($q) => $q->where('status', $status))
             ->when($keyword !== '', function ($q) use ($keyword) {
                 $q->where(function ($q) use ($keyword) {
@@ -66,6 +67,11 @@ class OrderManagementService
             if ($order->expires_at && $order->expires_at->isPast()) {
                 throw ValidationException::withMessages([
                     'status' => 'Đơn đã hết thời gian giữ chỗ, không thể duyệt.',
+                ]);
+            }
+                        if (now()->gte($order->end_time)) {
+                throw ValidationException::withMessages([
+                    'status' => 'Đơn đã quá giờ trả, không thể duyệt. Hãy hủy đơn.',
                 ]);
             }
 
@@ -235,6 +241,7 @@ class OrderManagementService
 
         $this->payments->refundOverpaid($order, $staff, 'Trả xe sớm, hoàn tiền thời gian chưa dùng');
     }
+
     private function lock(RentalOrder $order): RentalOrder
     {
         return RentalOrder::whereKey($order->getKey())->lockForUpdate()->firstOrFail();

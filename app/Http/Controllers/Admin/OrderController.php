@@ -19,12 +19,13 @@ class OrderController extends Controller
     {
     }
 
-    public function index(Request $request)
+        public function index(Request $request)
     {
         $status = OrderStatus::tryFrom((string) $request->query('status'))?->value;
+        $orders = $this->orders->search($status, $request->query('q'));
 
         return view('admin.order-management.orderList', [
-            'orders' => $this->orders->search($status, $request->query('q')),
+            'orders' => $orders,
             'counts' => $this->orders->countByStatus(),
             'status' => $status,
             'q' => $request->query('q'),

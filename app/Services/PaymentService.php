@@ -125,6 +125,11 @@ class PaymentService
         if ($order->status === OrderStatus::Cancelled) {
             throw ValidationException::withMessages(['payment' => 'Đơn đã hủy, không thu tiền.']);
         }
+                if ($type === PaymentType::Deposit
+            && in_array($order->status, [OrderStatus::Pending, OrderStatus::Approved], true)
+            && now()->gte($order->end_time)) {
+            throw ValidationException::withMessages(['payment' => 'Đơn đã quá giờ trả, không thu cọc. Hãy hủy đơn.']);
+        }
 
         if ($type === PaymentType::Deposit) {
             $pendingCash = $order->payments()
