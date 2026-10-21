@@ -7,6 +7,7 @@
         ['route' => 'admin.orders.index',     'match' => 'admin.orders.*',      'label' => 'Đơn thuê',     'can' => 'order.manage'],
         ['route' => 'admin.customers.index',  'match' => 'admin.customers.*',   'label' => 'Khách hàng',   'can' => 'customer.view'],
         ['route' => 'admin.vehicles.index',   'match' => 'admin.vehicles.*',    'label' => 'Xe',           'can' => 'vehicle.manage'],
+        ['route' => 'admin.fleet.index',      'match' => 'admin.fleet.*',       'label' => 'Đội xe',       'can' => 'vehicle.manage'],
         ['route' => 'admin.stores.index',     'match' => 'admin.stores.*',      'label' => 'Cửa hàng',     'can' => 'store.manage'],
         ['route' => 'admin.pricing',          'match' => 'admin.pricing*',      'label' => 'Giá thuê',     'can' => 'pricing.manage'],
         ['route' => 'admin.promotions.index', 'match' => 'admin.promotions.*',  'label' => 'Khuyến mãi',   'can' => 'pricing.manage'],
