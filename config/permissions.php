@@ -8,9 +8,10 @@
 return [
     'booking.create'   => ['customer'],
     'order.view_own'   => ['customer'],
-
+    'chat.use'   => ['customer'],
     'dashboard.view'   => ['staff', 'admin'],
     'gps.monitor'      => ['staff', 'admin'],
+    'chat.manage'       => ['staff', 'admin'],
     'order.manage'     => ['staff', 'admin'],
     'customer.view'    => ['staff', 'admin'],
     'customer.lock'    => ['staff', 'admin'],

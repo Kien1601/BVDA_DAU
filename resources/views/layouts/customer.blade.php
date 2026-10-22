@@ -29,5 +29,6 @@
     @include('layouts.partials.customer-footer')
 
     @stack('scripts')
+    @include('customer.partials.chat-widget')
 </body>
 </html>

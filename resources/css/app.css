@@ -47,3 +47,4 @@ html[data-theme="dark"] .theme-icon-moon,
 html[data-theme="light"] .theme-icon-sun {
     display: none;
 }
+[x-cloak] { display: none !important; }

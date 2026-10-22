@@ -2,6 +2,8 @@ import './shared/config/echo';
 import { initThemeToggle } from './shared/theme/theme';
 
 import Alpine from 'alpinejs';
+import chatWidget from './shared/chat/chatWidget';
+import chatInbox from './shared/chat/chatInbox';
 
 window.Alpine = Alpine;
 Alpine.data('notificationBell', (unread, feedUrl, userId) => ({
@@ -40,6 +42,9 @@ Alpine.data('notificationBell', (unread, feedUrl, userId) => ({
         if (res.ok) Object.assign(this, await res.json(), { loaded: true });
     },
 }));
+
+Alpine.data('chatWidget', chatWidget);
+Alpine.data('chatInbox', chatInbox);
 Alpine.start();
 
 initThemeToggle();

@@ -44,6 +44,16 @@ Route::middleware('auth')->group(function () {
         ->name('account.orders');
     Route::get('/account/orders/{order}/invoice', [Customer\AccountController::class, 'invoice'])
         ->name('account.invoice');
+        // Chat với nhân viên (khung chat góc màn hình)
+    Route::middleware('can:chat.use')
+        ->prefix('chat')->name('chat.')
+        ->controller(Customer\ChatController::class)
+        ->group(function () {
+            Route::get('/messages', 'index')->name('index');
+            Route::post('/messages', 'store')->middleware('throttle:20,1')->name('store');
+            Route::post('/read', 'read')->name('read');
+            Route::post('/translate', 'translate')->middleware('throttle:30,1')->name('translate');
+        });
     Route::post('/bookings/{order}/early-return', [\App\Http\Controllers\EarlyReturnController::class, 'store'])
         ->name('booking.early-return');
     Route::delete('/bookings/{order}/early-return', [\App\Http\Controllers\EarlyReturnController::class, 'destroy'])
@@ -135,6 +145,16 @@ Route::middleware(['auth', 'role:staff,admin'])
         Route::put('/{staff}', 'update')->name('update');
         Route::post('/{staff}/toggle-lock', 'toggleLock')->name('toggle-lock');
     });
+                Route::middleware('can:chat.manage')
+            ->prefix('chat')->name('chat.')
+            ->controller(\App\Http\Controllers\Admin\ChatController::class)
+            ->group(function () {
+                Route::get('/', 'index')->name('index');
+                Route::get('/{conversation}/messages', 'messages')->name('messages');
+                Route::post('/{conversation}/messages', 'store')->middleware('throttle:60,1')->name('store');
+                Route::post('/translate', 'translate')->middleware('throttle:60,1')->name('translate');
+            });
+            
             // C7: Nhân viên
         Route::prefix('notifications')->name('notifications.')->controller(\App\Http\Controllers\Admin\NotificationController::class)
         ->group(function () {
