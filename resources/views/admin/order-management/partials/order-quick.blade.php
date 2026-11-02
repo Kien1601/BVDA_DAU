@@ -9,7 +9,10 @@
     $lateTake = $order->status === OrderStatus::Approved && $order->start_time->isPast();
     $overdue  = $order->status === OrderStatus::Active && $order->end_time->isPast();
     $expired  = in_array($order->status, [OrderStatus::Pending, OrderStatus::Approved], true) && $order->end_time->isPast();
-    $expired  = $order->status === OrderStatus::Pending && $order->end_time->isPast();
+    $earlyPickup = $order->start_time->isFuture();
+    $pickupConfirmMessage = $earlyPickup
+        ? 'Giờ nhận theo đơn là '.$order->start_time->format('H:i d/m/Y').'. Xác nhận đã giao xe sớm cho khách?'
+        : 'Xác nhận đã giao xe cho khách?';
     $label = 'block text-[10px] uppercase tracking-label text-fg-muted';
 @endphp
 
@@ -61,8 +64,10 @@
 
     @if ($order->status === OrderStatus::Approved && $paid && ! $expired)
         <form method="POST" action="{{ route('admin.orders.pick-up', $order) }}"
-              onsubmit="return confirm('Xác nhận đã giao xe cho khách?')">
+              data-pickup-confirm="{{ $pickupConfirmMessage }}"
+              onsubmit="if (!confirm(this.dataset.pickupConfirm)) return false; this.elements.confirm_early_pickup.value = '{{ $earlyPickup ? '1' : '0' }}';">
             @csrf
+            <input type="hidden" name="confirm_early_pickup" value="0">
             <x-button>Giao xe</x-button>
         </form>
     @endif

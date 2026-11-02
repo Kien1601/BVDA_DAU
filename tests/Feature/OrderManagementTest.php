@@ -3,7 +3,11 @@
 namespace Tests\Feature;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
+use App\Enums\PaymentType;
 use App\Enums\VehicleStatus;
+use App\Models\Payment;
 use App\Models\RentalOrder;
 use App\Models\Store;
 use App\Models\User;
@@ -92,6 +96,33 @@ class OrderManagementTest extends TestCase
             ->assertSee($don->user->name);
     }
 
+    public function test_hien_xac_nhan_giao_xe_som_trong_danh_sach_va_chi_tiet(): void
+    {
+        $don = $this->taoDon(OrderStatus::Approved, ['start_time' => now()->addHours(3)]);
+        Payment::create([
+            'rental_order_id' => $don->id,
+            'type' => PaymentType::Deposit,
+            'method' => PaymentMethod::Cash,
+            'amount' => $don->deposit_amount,
+            'status' => PaymentStatus::Paid,
+            'txn_ref' => 'test-deposit-'.$don->id,
+            'paid_at' => now(),
+        ]);
+        $nhanVien = $this->taoNhanVien();
+        $xacNhan = 'Giờ nhận theo đơn là '.$don->start_time->format('H:i d/m/Y').'. Xác nhận đã giao xe sớm cho khách?';
+
+        $this->actingAs($nhanVien)
+            ->get(route('admin.orders.index'))
+            ->assertOk()
+            ->assertSee($xacNhan)
+            ->assertSee('name="confirm_early_pickup"', false);
+
+        $this->get(route('admin.orders.show', $don))
+            ->assertOk()
+            ->assertSee($xacNhan)
+            ->assertSee('name="confirm_early_pickup"', false);
+    }
+
     public function test_duyet_don_cho_duyet(): void
     {
         $nhanVien = $this->taoNhanVien();
@@ -121,7 +152,7 @@ class OrderManagementTest extends TestCase
         $don = $this->taoDon(OrderStatus::Approved, ['start_time' => now()->addMinutes(30)]);
 
         $this->actingAs($this->taoNhanVien())
-            ->post(route('admin.orders.pick-up', $don))
+            ->post(route('admin.orders.pick-up', $don), ['confirm_early_pickup' => '1'])
             ->assertSessionHasNoErrors();
 
         $this->assertSame(OrderStatus::Active, $don->refresh()->status);
@@ -129,7 +160,7 @@ class OrderManagementTest extends TestCase
         $this->assertSame(VehicleStatus::Rented, $don->vehicle->refresh()->status);
     }
 
-    public function test_khong_giao_xe_qua_som(): void
+    public function test_khong_giao_xe_som_khi_chua_co_xac_nhan(): void
     {
         $don = $this->taoDon(OrderStatus::Approved, ['start_time' => now()->addHours(3)]);
 
@@ -140,13 +171,66 @@ class OrderManagementTest extends TestCase
         $this->assertSame(OrderStatus::Approved, $don->refresh()->status);
     }
 
+    public function test_giao_xe_som_hon_mot_gio_khi_nhan_vien_xac_nhan(): void
+    {
+        $don = $this->taoDon(OrderStatus::Approved, ['start_time' => now()->addHours(3)]);
+        $nhanVien = $this->taoNhanVien();
+
+        $this->actingAs($nhanVien)
+            ->post(route('admin.orders.pick-up', $don), ['confirm_early_pickup' => '1'])
+            ->assertSessionHasNoErrors();
+
+        $don->refresh();
+        $this->assertSame(OrderStatus::Active, $don->status);
+        $this->assertNotNull($don->picked_up_at);
+        $this->get(route('admin.orders.show', $don))->assertOk();
+        $this->assertTrue(
+            RentalOrder::query()->whereKey($don->id)->blocking()
+                ->overlapping(now()->addMinutes(30), now()->addHours(2))
+                ->exists()
+        );
+    }
+
+    public function test_khong_giao_xe_cho_don_da_qua_gio_tra(): void
+    {
+        $don = $this->taoDon(OrderStatus::Approved, [
+            'start_time' => now()->subHours(3),
+            'end_time' => now()->subMinute(),
+        ]);
+
+        $this->actingAs($this->taoNhanVien())
+            ->post(route('admin.orders.pick-up', $don), ['confirm_early_pickup' => '1'])
+            ->assertSessionHasErrors('status');
+
+        $this->assertSame(OrderStatus::Approved, $don->refresh()->status);
+    }
+
+    public function test_giao_xe_som_khi_co_don_khac_trong_khoang_thoi_gian(): void
+    {
+        $xe = $this->taoXe();
+        $don = $this->taoDon(OrderStatus::Approved, [
+            'start_time' => now()->addHours(3),
+            'end_time' => now()->addHours(25),
+        ], $xe);
+        $this->taoDon(OrderStatus::Approved, [
+            'start_time' => now()->subMinutes(30),
+            'end_time' => now()->addHour(),
+        ], $xe);
+
+        $this->actingAs($this->taoNhanVien())
+            ->post(route('admin.orders.pick-up', $don), ['confirm_early_pickup' => '1'])
+            ->assertSessionHasErrors('start_time');
+
+        $this->assertSame(OrderStatus::Approved, $don->refresh()->status);
+    }
+
     public function test_khong_giao_xe_khi_xe_dang_bao_tri(): void
     {
         $xe = $this->taoXe(['status' => 'maintenance']);
         $don = $this->taoDon(OrderStatus::Approved, ['start_time' => now()->addMinutes(10)], $xe);
 
         $this->actingAs($this->taoNhanVien())
-            ->post(route('admin.orders.pick-up', $don))
+            ->post(route('admin.orders.pick-up', $don), ['confirm_early_pickup' => '1'])
             ->assertSessionHasErrors('status');
     }
 

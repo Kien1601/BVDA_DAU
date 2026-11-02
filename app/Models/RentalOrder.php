@@ -128,6 +128,15 @@ class RentalOrder extends Model
     /** Hai khoảng thời gian chồng nhau; khoảng nối tiếp (A kết thúc đúng lúc B bắt đầu) KHÔNG tính là chồng */
     public function scopeOverlapping(Builder $query, CarbonInterface $start, CarbonInterface $end): Builder
     {
-        return $query->where('start_time', '<', $end)->where('end_time', '>', $start);
+        return $query
+            ->where(function (Builder $query) use ($end) {
+                $query->where('start_time', '<', $end)
+                    ->orWhere(function (Builder $query) use ($end) {
+                        $query->where('status', OrderStatus::Active->value)
+                            ->whereNotNull('picked_up_at')
+                            ->where('picked_up_at', '<', $end);
+                    });
+            })
+            ->where('end_time', '>', $start);
     }
 }

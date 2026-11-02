@@ -54,7 +54,15 @@ class OrderController extends Controller
 
     public function pickUp(Request $request, RentalOrder $order)
     {
-        $this->orders->pickUp($order, $request->user());
+        $request->validate([
+            'confirm_early_pickup' => ['nullable', 'boolean'],
+        ]);
+
+        $this->orders->pickUp(
+            $order,
+            $request->user(),
+            $request->boolean('confirm_early_pickup'),
+        );
 
         return back()->with('success', "Đã giao xe cho đơn #{$order->id}.");
     }

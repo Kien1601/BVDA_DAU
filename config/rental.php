@@ -18,8 +18,6 @@ return [
     'deposit_round' => 10000,
     'deposit_min' => 100000,
 
-    // C5: giao xe sớm nhất bao nhiêu phút trước giờ nhận
-    'pickup_early_minutes' => 60,
     // C5: trả trễ trong khoảng này không tính phụ thu
     'late_grace_minutes' => 15,
     // C5: giao xe trễ quá bao nhiêu phút thì tính phụ thu

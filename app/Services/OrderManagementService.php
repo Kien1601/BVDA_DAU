@@ -86,16 +86,16 @@ class OrderManagementService
         });
     }
 
-    public function pickUp(RentalOrder $order, User $staff): RentalOrder
+    public function pickUp(RentalOrder $order, User $staff, bool $confirmEarlyPickup = false): RentalOrder
     {
-        return DB::transaction(function () use ($order, $staff) {
+        return DB::transaction(function () use ($order, $staff, $confirmEarlyPickup) {
             $order = $this->lock($order);
             $this->requireStatus($order, [OrderStatus::Approved], 'Chỉ giao xe cho đơn đã duyệt.');
 
-            $earliest = $order->start_time->copy()->subMinutes(config('rental.pickup_early_minutes'));
-            if (now()->lt($earliest)) {
+            $earlyPickup = now()->lt($order->start_time);
+            if ($earlyPickup && ! $confirmEarlyPickup) {
                 throw ValidationException::withMessages([
-                    'status' => 'Chưa tới giờ giao xe. Sớm nhất lúc '.$earliest->format('H:i d/m/Y').'.',
+                    'status' => 'Giao xe trước giờ nhận cần được nhân viên xác nhận.',
                 ]);
             }
             if (now()->gte($order->end_time)) {
@@ -109,6 +109,10 @@ class OrderManagementService
                 throw ValidationException::withMessages([
                     'status' => 'Xe đang không sẵn sàng (đang cho thuê hoặc bảo trì).',
                 ]);
+            }
+
+            if ($earlyPickup) {
+                $this->booking->assertAvailable($vehicle, now(), $order->end_time, $order->id);
             }
 
             $vehicle->update(['status' => VehicleStatus::Rented]);

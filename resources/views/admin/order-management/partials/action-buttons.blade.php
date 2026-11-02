@@ -1,5 +1,12 @@
 @php use App\Enums\OrderStatus; @endphp
 
+@php
+    $earlyPickup = $order->start_time->isFuture();
+    $pickupConfirmMessage = $earlyPickup
+        ? 'Giờ nhận theo đơn là '.$order->start_time->format('H:i d/m/Y').'. Xác nhận đã giao xe sớm cho khách?'
+        : 'Xác nhận đã giao xe cho khách?';
+@endphp
+
 @if ($order->status === OrderStatus::Pending)
                 <section class="border border-edge bg-card p-5">
                     <h2 class="mb-2 text-base text-fg">Duyệt đơn</h2>
@@ -13,7 +20,7 @@
                 </section>
             @endif
 
-            @if ($order->status === OrderStatus::Approved)
+            @if ($order->status === OrderStatus::Approved && $order->end_time->isFuture())
                 <section class="border border-edge bg-card p-5">
                     <h2 class="mb-2 text-base text-fg">Giao xe</h2>
                     <p class="mb-4 text-sm text-fg-soft">Kiểm tra CCCD của khách và nhận cọc trước khi giao.</p>
@@ -21,8 +28,10 @@
                         <p class="mb-4 text-sm text-vermilion">Khách chưa trả cọc. Thu cọc ở khung Thanh toán trước khi giao xe.</p>
                     @endunless
                     <form method="POST" action="{{ route('admin.orders.pick-up', $order) }}"
-                          onsubmit="return confirm('Xác nhận đã giao xe cho khách?')">
+                          data-pickup-confirm="{{ $pickupConfirmMessage }}"
+                          onsubmit="if (!confirm(this.dataset.pickupConfirm)) return false; this.elements.confirm_early_pickup.value = '{{ $earlyPickup ? '1' : '0' }}';">
                         @csrf
+                        <input type="hidden" name="confirm_early_pickup" value="0">
                         <button type="submit" class="{{ $btn }}">Giao xe</button>
                     </form>
                 </section>
